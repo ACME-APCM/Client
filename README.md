@@ -1,2 +1,2 @@
 # Client
-Client side of the project
+Client side of the project.
