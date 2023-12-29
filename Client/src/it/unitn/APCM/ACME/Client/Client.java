@@ -1,3 +1,5 @@
+package it.unitn.APCM.ACME.Client;
+
 import java.io.*;
 import javax.swing.*;
 import java.awt.*;
@@ -26,7 +28,7 @@ public class Client extends JFrame implements ActionListener {
     //read string from file
     public String readFile(String path) {
         // if the path is not set, ask the user via an interactive window
-        if (path.equals("")){
+        if (path.isEmpty()){
             // create an interactive file chooser window
             JFileChooser chooser = new JFileChooser();
             // open in current directory
@@ -49,7 +51,7 @@ public class Client extends JFrame implements ActionListener {
         try (
             FileInputStream fis = new FileInputStream(new File(path));
         ) {
-            byte data[] = new byte[fis.available()];
+            byte[] data = new byte[fis.available()];
             fis.read(data);
             fis.close();
             String str = new String(data);
@@ -128,7 +130,7 @@ public class Client extends JFrame implements ActionListener {
 }
 
 //Code for socket
-/*public class Client {
+/*public class it.unitn.APCM.ACME.Client.Client {
 
     public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException, InterruptedException{
         //get the localhost IP address, if server is running on some other IP, you need to use that
