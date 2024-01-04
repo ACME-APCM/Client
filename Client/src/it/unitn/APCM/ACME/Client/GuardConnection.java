@@ -28,6 +28,7 @@ public class GuardConnection {
 
                 while ((inputLine = in.readLine()) != null) {
                     response.add(inputLine);
+                    System.out.println(inputLine);
                 }
                 in.close();
             }
@@ -37,5 +38,4 @@ public class GuardConnection {
 
         return response;
     }
-
 }

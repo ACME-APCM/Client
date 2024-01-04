@@ -57,7 +57,8 @@ public class EditorDial extends JDialog {
             JButton button = new JButton(res);
             button.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    // Add functionality for button click here
+                    ArrayList<String> response = conn.http_request("file?email=test@acme.local&password=6570eb26bb40a52e1b144774aee2d297&path=" + e.getActionCommand());
+                    System.out.println(response);
                 }
             });
 
@@ -70,11 +71,6 @@ public class EditorDial extends JDialog {
 
             buttonsPanel.add(button, buttonConstraints);
         }
-
-        // for (int i = 0; i < 10; i++) {
-        // JButton saveButton = new JButton("Save " + i);
-        // buttonsPanel.add(saveButton);
-        // }
 
         JScrollPane filesScrollPane = new JScrollPane(buttonsPanel);
         cs.gridx = 1;

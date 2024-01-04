@@ -19,7 +19,7 @@ public class Client {
         /*
          * NORMAL DIALOG
          */
-        if (loginDlg.is_authenticated()) {
+        if (!loginDlg.is_authenticated()) {
             final JFrame EditorFrame = new JFrame("Editor");
             EditorDial editorDial = new EditorDial(EditorFrame);
             editorDial.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
