@@ -11,10 +11,13 @@ public class EditorDial extends JDialog {
 
     private JButton saveButton;
     private JButton openButton;
+    private JLabel messageLabel;
+    private String path;
 
     public EditorDial(Frame parent) {
         super(parent, "Editor", true);
 
+        messageLabel = new JLabel("");
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints cs = new GridBagConstraints();
         cs.fill = GridBagConstraints.BOTH;
@@ -57,8 +60,15 @@ public class EditorDial extends JDialog {
             JButton button = new JButton(res);
             button.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    ArrayList<String> response = conn.http_request("file?email=test@acme.local&password=6570eb26bb40a52e1b144774aee2d297&path=" + e.getActionCommand());
-                    System.out.println(response);
+                    path = e.getActionCommand();
+                    ArrayList<String> response = conn.http_request2("file?email=test@acme.local&password=6570eb26bb40a52e1b144774aee2d297&path=" + e.getActionCommand());
+                    String fileContent = "";
+                    for(String s: response){
+                        fileContent += s + "\n";
+                    }
+                    textArea.setText(fileContent);
+                    //System.out.println(response);
+                    messageLabel.setText("File opened");
                 }
             });
 
@@ -86,18 +96,26 @@ public class EditorDial extends JDialog {
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Add functionality for save button here
-            }
+                ArrayList<String> response = conn.http_request_saveFile("file?email=test@acme.local&password=6570eb26bb40a52e1b144774aee2d297&path=" + path, textArea.getText());
+                String message = "";
+                for(String res: response){
+                    message += res;
+                }
+                messageLabel.setText(message);
+            }   
         });
 
+        /*
         openButton = new JButton("Open");
         openButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Add functionality for open button here
             }
-        });
+        });*/
 
         inputPanel.add(saveButton);
-        inputPanel.add(openButton);
+        inputPanel.add(messageLabel);
+        //inputPanel.add(openButton);
 
         cs.gridx = 0;
         cs.gridy = 1;
