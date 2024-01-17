@@ -5,12 +5,13 @@ import java.awt.event.*;
 import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
 public class EditorDial extends JDialog {
 
     private JButton saveButton;
-    private JButton openButton;
+    private JButton newButton;
     private JLabel messageLabel;
     private String path;
 
@@ -30,6 +31,10 @@ public class EditorDial extends JDialog {
         int rightInset = 10;
         cs.insets = new Insets(topInset, leftInset, bottomInset, rightInset);
 
+        Border border = BorderFactory.createLineBorder(Color.BLACK, 2);
+        JTextArea pathArea = new JTextArea(2, 10);
+        pathArea.setBorder(border);
+        
         // Left panel with scrollable text
         JTextArea textArea = new JTextArea(30, 60);
         JScrollPane chatScroll = new JScrollPane(textArea);
@@ -105,17 +110,25 @@ public class EditorDial extends JDialog {
             }   
         });
 
-        /*
-        openButton = new JButton("Open");
-        openButton.addActionListener(new ActionListener() {
+        
+        newButton = new JButton("New File");
+        newButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // Add functionality for open button here
+                // Add functionality for create button here
+                String newPath = pathArea.getText();
+                ArrayList<String> response = conn.http_request_newFile("newFile?email=test@acme.local&password=6570eb26bb40a52e1b144774aee2d297&path=" + newPath, textArea.getText());
+                String message = "";
+                for(String res: response){
+                    message += res;
+                }
+                messageLabel.setText(message);
             }
-        });*/
+        });
 
+        inputPanel.add(pathArea);
         inputPanel.add(saveButton);
         inputPanel.add(messageLabel);
-        //inputPanel.add(openButton);
+        inputPanel.add(newButton);
 
         cs.gridx = 0;
         cs.gridy = 1;

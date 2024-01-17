@@ -121,6 +121,41 @@ public class GuardConnection {
 
         return response;
     }
+
+    public ArrayList<String> http_request_newFile(String url, String content) {
+        ArrayList<String> response = new ArrayList<>();
+        String request_url = guard_url + url;
+        URL obj;
+
+        try {
+            obj = new URL(request_url);
+
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("User-Agent", "Mozilla/5.0");
+            con.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
+            con.setDoOutput(true);
+            try (OutputStream os = con.getOutputStream()) {
+                byte[] input = content.getBytes("utf-8");
+                os.write(input, 0, input.length);           
+            }
+
+            if (con.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                String inputLine;
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.add(inputLine);
+                    //System.out.println(inputLine);
+                }
+                in.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return response;
+    }
 }
 
 
