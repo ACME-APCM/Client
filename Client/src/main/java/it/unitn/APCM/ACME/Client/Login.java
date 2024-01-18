@@ -16,7 +16,7 @@ public class Login extends JDialog {
     private JButton btnLogin;
     private boolean authenticated = false;
 
-    public Login(Frame parent) {
+    public Login(Frame parent, User user) {
         super(parent, "Login", true);
 
         JPanel panel = new JPanel(new GridBagLayout());
@@ -76,6 +76,8 @@ public class Login extends JDialog {
                             "Login",
                             JOptionPane.INFORMATION_MESSAGE);
                     authenticated = true;
+                    user.setEmail(get_email());
+                    user.setPassword(get_password());
                     dispose();
                 } else {
                     JOptionPane.showMessageDialog(Login.this,

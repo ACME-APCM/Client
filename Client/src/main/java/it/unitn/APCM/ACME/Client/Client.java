@@ -6,11 +6,13 @@ public class Client {
 
     public static void main(String args[]) {
 
+        User user = new User();
+
         /*
          * LOGIN DIALOG
          */
         final JFrame loginFrame = new JFrame("Login");
-        Login loginDlg = new Login(loginFrame);
+        Login loginDlg = new Login(loginFrame, user);
         loginDlg.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         loginDlg.setSize(500, 150);
         loginDlg.setLocationRelativeTo(null);
@@ -21,7 +23,7 @@ public class Client {
          */
         if (loginDlg.is_authenticated()) {
             final JFrame EditorFrame = new JFrame("Editor");
-            EditorDial editorDial = new EditorDial(EditorFrame);
+            EditorDial editorDial = new EditorDial(EditorFrame, user);
             editorDial.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             editorDial.setSize(1500, 700);
             editorDial.setLocationRelativeTo(null);

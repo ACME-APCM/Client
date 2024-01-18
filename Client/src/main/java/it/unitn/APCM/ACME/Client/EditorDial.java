@@ -17,7 +17,7 @@ public class EditorDial extends JDialog {
     private JLabel messageLabel;
     private String path;
 
-    public EditorDial(Frame parent) {
+    public EditorDial(Frame parent, User user) {
         super(parent, "Editor", true);
 
         messageLabel = new JLabel("");
@@ -68,7 +68,7 @@ public class EditorDial extends JDialog {
             button.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     path = e.getActionCommand();
-                    ClientResponse response = conn.http_requestOpen("file?email=test@acme.local&password=6570eb26bb40a52e1b144774aee2d297&path=" + e.getActionCommand());
+                    ClientResponse response = conn.http_requestOpen("file?email=" + user.getEmail() +"&password=" + user.getPassword() +"&path=" + e.getActionCommand());
                     textArea.setText(response.get_text());
                     saveButton.setEnabled(response.get_w_mode());
                     //saveButton.setEnabled(false);
@@ -100,7 +100,7 @@ public class EditorDial extends JDialog {
         saveButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Add functionality for save button here
-                ArrayList<String> response = conn.http_request_saveFile("file?email=test@acme.local&password=6570eb26bb40a52e1b144774aee2d297&path=" + path, textArea.getText());
+                ArrayList<String> response = conn.http_request_saveFile("file?email=" + user.getEmail() + "&password=" + user.getPassword() +"&path=" + path, textArea.getText());
                 String message = "";
                 for(String res: response){
                     message += res;
@@ -115,7 +115,7 @@ public class EditorDial extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 // Add functionality for create button here
                 String newPath = pathArea.getText();
-                ArrayList<String> response = conn.http_request_newFile("newFile?email=test@acme.local&password=6570eb26bb40a52e1b144774aee2d297&path=" + newPath, textArea.getText());
+                ArrayList<String> response = conn.http_request_newFile("newFile?email=" + user.getEmail() + "&password=" + user.getPassword() + "&path=" + newPath, textArea.getText());
                 String message = "";
                 for(String res: response){
                     message += res;
