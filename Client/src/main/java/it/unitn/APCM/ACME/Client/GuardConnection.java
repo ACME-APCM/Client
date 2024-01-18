@@ -112,7 +112,7 @@ public class GuardConnection {
 
         try {
             obj = new URL(request_url);
-
+            System.out.println("URL: " + request_url);
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("User-Agent", "Mozilla/5.0");

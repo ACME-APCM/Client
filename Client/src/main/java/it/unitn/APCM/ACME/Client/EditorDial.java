@@ -16,6 +16,7 @@ public class EditorDial extends JDialog {
     private JButton newButton;
     private JLabel messageLabel;
     private String path;
+    private int buttonGridY;
 
     public EditorDial(Frame parent, User user) {
         super(parent, "Editor", true);
@@ -61,7 +62,7 @@ public class EditorDial extends JDialog {
         GuardConnection conn = new GuardConnection();
         ArrayList<String> response = conn.http_request("files");
 
-        int buttonGridY = 0; // Track grid y position for buttons
+        buttonGridY = 0; // Track grid y position for buttons
 
         for (String res : response) {
             JButton button = new JButton(res);
@@ -121,7 +122,25 @@ public class EditorDial extends JDialog {
                     message += res;
                 }
                 messageLabel.setText(message);
-            }
+
+                JButton button = new JButton(newPath);
+                button.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        ClientResponse response = conn.http_requestOpen("file?email=" + user.getEmail() +"&password=" + user.getPassword() +"&path=" + e.getActionCommand());
+                        textArea.setText(response.get_text());
+                        saveButton.setEnabled(response.get_w_mode());
+                    }
+                });
+
+                buttonConstraints.gridx = 0;
+                buttonConstraints.gridy = buttonGridY++;
+                buttonConstraints.weightx = 1.0; // Allow buttons to expand horizontally
+
+                buttonConstraints.ipadx = 50; // Horizontal padding between buttons (adjust as needed)
+                buttonConstraints.ipady = 10; // Vertical padding between buttons (adjust as needed)
+
+                buttonsPanel.add(button, buttonConstraints);
+                }
         });
 
         inputPanel.add(pathArea);
