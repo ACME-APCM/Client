@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import it.unitn.APCM.ACME.Client.ClientCommon.ClientResponse;
+import it.unitn.APCM.ACME.Client.ClientCommon.JSONToArray;
 
 public class GuardConnection {
 
@@ -43,8 +44,8 @@ public class GuardConnection {
         return response;
     }
 
-    public ArrayList<String> http_request2(String url) {
-        ArrayList<String> response = new ArrayList<>();
+    public ClientResponse http_requestOpen(String url) {
+        ClientResponse response = new ClientResponse();
         String request_url = guard_url + url;
         URL obj;
 
@@ -55,28 +56,11 @@ public class GuardConnection {
             con.setRequestMethod("GET");
             con.setRequestProperty("User-Agent", "Mozilla/5.0");
             if (con.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                
-                Object o = con.getContent();
-                //System.out.println(o.toString());
-                ClientResponse cl =  new ClientResponse();
-                
-                /*JSONObject obj = new JSONObject(o);
-                String pageName = obj.getJSONObject("pageInfo").getString("pageName");
-        
-                System.out.println(pageName);
-        
-                JSONArray arr = obj.getJSONArray("posts");
-                for (int i = 0; i < arr.length(); i++) {
-                    String post_id = arr.getJSONObject(i).getString("post_id");
-                    System.out.println(post_id);
-                }*/
-
+                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));              
                 String inputLine;
 
                 while ((inputLine = in.readLine()) != null) {
-                    response.add(inputLine);
-                    //System.out.println(inputLine);
+                    response = (new JSONToArray()).convertToClientResponse(inputLine);
                 }
                 in.close();
             }

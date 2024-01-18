@@ -8,6 +8,8 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
+import it.unitn.APCM.ACME.Client.ClientCommon.ClientResponse;
+
 public class EditorDial extends JDialog {
 
     private JButton saveButton;
@@ -66,13 +68,10 @@ public class EditorDial extends JDialog {
             button.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
                     path = e.getActionCommand();
-                    ArrayList<String> response = conn.http_request2("file?email=test@acme.local&password=6570eb26bb40a52e1b144774aee2d297&path=" + e.getActionCommand());
-                    String fileContent = "";
-                    for(String s: response){
-                        fileContent += s + "\n";
-                    }
-                    textArea.setText(fileContent);
-                    //System.out.println(response);
+                    ClientResponse response = conn.http_requestOpen("file?email=test@acme.local&password=6570eb26bb40a52e1b144774aee2d297&path=" + e.getActionCommand());
+                    textArea.setText(response.get_text());
+                    saveButton.setEnabled(response.get_w_mode());
+                    //saveButton.setEnabled(false);
                     messageLabel.setText("File opened");
                 }
             });

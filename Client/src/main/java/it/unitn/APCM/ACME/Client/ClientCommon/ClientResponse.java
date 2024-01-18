@@ -5,12 +5,6 @@ public class ClientResponse {
     String path_hash;
     boolean w_mode;
     String text;
-/*
-    ClientResponse(){}
-
-    ClientResponse(Object o){
-        this.id = o._id;
-    }*/
 
     /*
      * SETTER
