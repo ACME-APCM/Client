@@ -31,8 +31,8 @@ public class EditorDial extends JDialog {
         int rightInset = 10;
         cs.insets = new Insets(topInset, leftInset, bottomInset, rightInset);
 
-        Border border = BorderFactory.createLineBorder(Color.BLACK, 2);
-        JTextArea pathArea = new JTextArea(2, 10);
+        Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
+        JTextArea pathArea = new JTextArea(1, 20);
         pathArea.setBorder(border);
         
         // Left panel with scrollable text
@@ -126,9 +126,9 @@ public class EditorDial extends JDialog {
         });
 
         inputPanel.add(pathArea);
-        inputPanel.add(saveButton);
-        inputPanel.add(messageLabel);
         inputPanel.add(newButton);
+        inputPanel.add(saveButton);
+        inputPanel.add(messageLabel);        
 
         cs.gridx = 0;
         cs.gridy = 1;

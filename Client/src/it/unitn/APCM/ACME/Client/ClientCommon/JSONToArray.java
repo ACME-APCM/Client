@@ -1,4 +1,4 @@
-/*package it.unitn.APCM.ACME.Client.ClientCommon;
+package it.unitn.APCM.ACME.Client.ClientCommon;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -24,4 +24,3 @@ public class JSONToArray extends ArrayList<String> {
 	}
 
 }
-*/
