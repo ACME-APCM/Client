@@ -16,7 +16,7 @@ public class GuardConnection {
     private final static String guard_url = "http://localhost:8090/api/v1/";
 
     public String httpRequest(String url) {
-        String response = "error";
+        String response = "";
         String request_url = guard_url + url;
         URL obj;
 

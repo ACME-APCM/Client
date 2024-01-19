@@ -20,6 +20,7 @@ public class EditorDial extends JDialog {
     private JLabel lbl_message;
     private String path;
     ArrayList<JButton> buttons = new ArrayList<JButton>();
+    JLabel selected_file = new JLabel("No text selected");
     GuardConnection conn = new GuardConnection();
 
     public EditorDial(Frame parent, User user) {
@@ -42,7 +43,7 @@ public class EditorDial extends JDialog {
         JTextArea text_area = new JTextArea(30, 60);
         JScrollPane chat_scroll = new JScrollPane(text_area);
         JPanel chat_panel = new JPanel(new BorderLayout());
-        chat_panel.add(new JLabel("Text:"), BorderLayout.PAGE_START);
+        chat_panel.add(selected_file, BorderLayout.PAGE_START);
         chat_panel.add(chat_scroll, BorderLayout.CENTER);
 
         cs.gridx = 0;
@@ -108,10 +109,13 @@ public class EditorDial extends JDialog {
                             ClientResponse response = conn
                                     .httpRequestOpen("file?email=" + user.getEmail() + "&path=" + path);
                             text_area.setText(response.get_text());
+                            selected_file.setText(path);
                             btn_save.setEnabled(response.get_w_mode());
                             lbl_message.setText("File opened");
                         }
                     });
+                    selected_file.setText(new_file_dial.getFilePath());
+                    text_area.setText("");
                     buttons.add(button);
                     updateButtons(buttons, buttons_panel, button_constraints);
                     panel.revalidate();
@@ -162,22 +166,25 @@ public class EditorDial extends JDialog {
     private void createButtons(ArrayList<JButton> buttons, User user, JTextArea text_area){
         
         String packed_response = conn.httpRequest("files");
-        ArrayList<String> response = new ArrayList<String>(Arrays.asList(packed_response.split(",")));
+        if(packed_response != ""){
+            ArrayList<String> response = new ArrayList<String>(Arrays.asList(packed_response.split(",")));
 
-        for (String res : response) {
-            JButton button = new JButton(res);
-            button.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    path = e.getActionCommand();
-                    ClientResponse response = conn
-                            .httpRequestOpen("file?email=" + user.getEmail() + "&path=" + path);
-                    text_area.setText(response.get_text());
-                    //btn_save.setEnabled(response.get_w_mode());
-                    lbl_message.setText("File opened");
-                }
-            });
+            for (String res : response) {
+                JButton button = new JButton(res);
+                button.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        path = e.getActionCommand();
+                        ClientResponse response = conn
+                                .httpRequestOpen("file?email=" + user.getEmail() + "&path=" + path);
+                        text_area.setText(response.get_text());
+                        selected_file.setText(path);
+                        btn_save.setEnabled(response.get_w_mode());
+                        lbl_message.setText("File opened");
+                    }
+                });
 
-            buttons.add(button);
+                buttons.add(button);
+            }
         }
     }
 }
