@@ -17,7 +17,6 @@ public class EditorDial extends JDialog {
 
     private JButton btn_save;
     private JButton btn_new;
-    private JLabel lbl_message;
     private String path;
     ArrayList<JButton> buttons = new ArrayList<JButton>();
     JLabel selected_file = new JLabel("No text selected");
@@ -26,7 +25,6 @@ public class EditorDial extends JDialog {
     public EditorDial(Frame parent, User user) {
         super(parent, "Editor", true);
 
-        lbl_message = new JLabel("");
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints cs = new GridBagConstraints();
         cs.fill = GridBagConstraints.BOTH;
@@ -111,7 +109,6 @@ public class EditorDial extends JDialog {
                             text_area.setText(response.get_text());
                             selected_file.setText(path);
                             btn_save.setEnabled(response.get_w_mode());
-                            lbl_message.setText("File opened");
                         }
                     });
                     selected_file.setText(new_file_dial.getFilePath());
@@ -125,7 +122,6 @@ public class EditorDial extends JDialog {
 
         input_panel.add(btn_new);
         input_panel.add(btn_save);
-        input_panel.add(lbl_message);
 
         cs.gridx = 0;
         cs.gridy = 1;
@@ -179,7 +175,6 @@ public class EditorDial extends JDialog {
                         text_area.setText(response.get_text());
                         selected_file.setText(path);
                         btn_save.setEnabled(response.get_w_mode());
-                        lbl_message.setText("File opened");
                     }
                 });
 
