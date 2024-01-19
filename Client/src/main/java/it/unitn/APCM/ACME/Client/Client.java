@@ -1,5 +1,8 @@
 package it.unitn.APCM.ACME.Client;
 
+import it.unitn.APCM.ACME.Client.Dials.EditorDial;
+import it.unitn.APCM.ACME.Client.Dials.LoginDial;
+
 import javax.swing.*;
 
 public class Client {
@@ -11,23 +14,23 @@ public class Client {
         /*
          * LOGIN DIALOG
          */
-        final JFrame loginFrame = new JFrame("Login");
-        Login loginDlg = new Login(loginFrame, user);
-        loginDlg.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        loginDlg.setSize(500, 150);
-        loginDlg.setLocationRelativeTo(null);
-        loginDlg.setVisible(true);
+        final JFrame login_frame = new JFrame("Login");
+        LoginDial login_dial = new LoginDial(login_frame, user);
+        login_dial.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        login_dial.setSize(500, 150);
+        login_dial.setLocationRelativeTo(null);
+        login_dial.setVisible(true);
 
         /*
          * NORMAL DIALOG
          */
-        if (loginDlg.is_authenticated()) {
-            final JFrame EditorFrame = new JFrame("Editor");
-            EditorDial editorDial = new EditorDial(EditorFrame, user);
-            editorDial.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            editorDial.setSize(1500, 700);
-            editorDial.setLocationRelativeTo(null);
-            editorDial.setVisible(true);
+        if (user.isAuthenticated()) {
+            final JFrame Editor_frame = new JFrame("Editor");
+            EditorDial editor_dial = new EditorDial(Editor_frame, user);
+            editor_dial.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            editor_dial.setSize(1500, 700);
+            editor_dial.setLocationRelativeTo(null);
+            editor_dial.setVisible(true);
         }
         System.exit(0);
     }

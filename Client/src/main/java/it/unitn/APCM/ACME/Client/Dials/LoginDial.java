@@ -1,22 +1,23 @@
-package it.unitn.APCM.ACME.Client;
+package it.unitn.APCM.ACME.Client.Dials;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.border.*;
 
-public class Login extends JDialog {
+import it.unitn.APCM.ACME.Client.GuardConnection;
+import it.unitn.APCM.ACME.Client.User;
 
-    private JTextField tfEmail;
-    private JPasswordField pfPassword;
-    private JLabel lbEmail;
-    private JLabel lbPassword;
-    private JButton btnLogin;
-    private boolean authenticated = false;
+public class LoginDial extends JDialog {
 
-    public Login(Frame parent, User user) {
+    private JTextField tf_email;
+    private JPasswordField pf_password;
+    private JLabel lbl_email;
+    private JLabel lbl_password;
+    private JButton btn_login;
+
+    public LoginDial(Frame parent, User user) {
         super(parent, "Login", true);
 
         JPanel panel = new JPanel(new GridBagLayout());
@@ -24,74 +25,72 @@ public class Login extends JDialog {
 
         cs.fill = GridBagConstraints.HORIZONTAL;
 
-        lbEmail = new JLabel("Email: ");
+        lbl_email = new JLabel("Email: ");
         cs.gridx = 0;
         cs.gridy = 0;
         cs.gridwidth = 1;
         cs.ipadx = 10;
         cs.ipady = 10;
-        panel.add(lbEmail, cs);
+        panel.add(lbl_email, cs);
 
-        tfEmail = new JTextField(30);
+        tf_email = new JTextField(30);
         cs.gridx = 1;
         cs.gridy = 0;
         cs.gridwidth = 2;
         cs.ipadx = 10;
         cs.ipady = 10;
-        panel.add(tfEmail, cs);
+        panel.add(tf_email, cs);
 
-        lbPassword = new JLabel("Password: ");
+        lbl_password = new JLabel("Password: ");
         cs.gridx = 0;
         cs.gridy = 1;
         cs.gridwidth = 1;
         cs.ipadx = 10;
         cs.ipady = 10;
-        panel.add(lbPassword, cs);
+        panel.add(lbl_password, cs);
 
-        pfPassword = new JPasswordField(30);
+        pf_password = new JPasswordField(30);
         cs.gridx = 1;
         cs.gridy = 1;
         cs.gridwidth = 2;
         cs.ipadx = 10;
         cs.ipady = 10;
-        panel.add(pfPassword, cs);
+        panel.add(pf_password, cs);
 
-        panel.setBorder(new LineBorder(Color.GRAY));
+        panel.setBorder(new LineBorder(Color.BLACK));
 
-        btnLogin = new JButton("Login");
+        btn_login = new JButton("Login");
 
-        btnLogin.addActionListener(new ActionListener() {
+        btn_login.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 GuardConnection conn = new GuardConnection();
 
-                // add password hashing with argon2
+                String response = conn
+                        .httpRequest("login?email=" + get_email() + "&password=" + get_password());
 
-                ArrayList<String> response = conn
-                        .http_request("login?email=" + get_email() + "&password=" + get_password());
-
-                if (response.get(0).equals("authenticated")) {
-                    JOptionPane.showMessageDialog(Login.this,
+                if (response.equals("success")) {
+                    JOptionPane.showMessageDialog(LoginDial.this,
                             "Authenticated successfully",
                             "Login",
                             JOptionPane.INFORMATION_MESSAGE);
-                    authenticated = true;
+                    user.setAuthenticated(true);
                     user.setEmail(get_email());
                     user.setPassword(get_password());
                     dispose();
                 } else {
-                    JOptionPane.showMessageDialog(Login.this,
+                    JOptionPane.showMessageDialog(LoginDial.this,
                             "Invalid username or password",
                             "Login",
                             JOptionPane.ERROR_MESSAGE);
-                    tfEmail.setText("");
-                    pfPassword.setText("");
+                    tf_email.setText("");
+                    pf_password.setText("");
                 }
             }
         });
 
         JPanel bp = new JPanel();
-        bp.add(btnLogin);
+        bp.add(btn_login);
 
         getContentPane().add(panel, BorderLayout.CENTER);
         getContentPane().add(bp, BorderLayout.PAGE_END);
@@ -102,14 +101,10 @@ public class Login extends JDialog {
     }
 
     public String get_email() {
-        return tfEmail.getText().trim();
+        return tf_email.getText().trim();
     }
 
     public String get_password() {
-        return new String(pfPassword.getPassword());
-    }
-
-    public boolean is_authenticated(){
-        return this.authenticated;
+        return new String(pf_password.getPassword());
     }
 }

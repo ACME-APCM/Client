@@ -15,8 +15,8 @@ public class GuardConnection {
 
     private final static String guard_url = "http://localhost:8090/api/v1/";
 
-    public ArrayList<String> http_request(String url) {
-        ArrayList<String> response = new ArrayList<>();
+    public String httpRequest(String url) {
+        String response = "error";
         String request_url = guard_url + url;
         URL obj;
 
@@ -31,8 +31,7 @@ public class GuardConnection {
                 String inputLine;
 
                 while ((inputLine = in.readLine()) != null) {
-                    response.add(inputLine);
-                    //System.out.println(inputLine);
+                    response = inputLine;
                 }
                 in.close();
             }
@@ -43,7 +42,7 @@ public class GuardConnection {
         return response;
     }
 
-    public ClientResponse http_requestOpen(String url) {
+    public ClientResponse httpRequestOpen(String url) {
         ClientResponse response = new ClientResponse();
         String request_url = guard_url + url;
         URL obj;
@@ -55,7 +54,7 @@ public class GuardConnection {
             con.setRequestMethod("GET");
             con.setRequestProperty("User-Agent", "Mozilla/5.0");
             if (con.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));              
+                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
 
                 while ((inputLine = in.readLine()) != null) {
@@ -85,7 +84,7 @@ public class GuardConnection {
             con.setDoOutput(true);
             try (OutputStream os = con.getOutputStream()) {
                 byte[] input = content.getBytes("utf-8");
-                os.write(input, 0, input.length);           
+                os.write(input, 0, input.length);
             }
 
             if (con.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
@@ -94,42 +93,7 @@ public class GuardConnection {
 
                 while ((inputLine = in.readLine()) != null) {
                     response.add(inputLine);
-                    //System.out.println(inputLine);
-                }
-                in.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return response;
-    }
-
-    public ArrayList<String> http_request_newFile(String url, String content) {
-        ArrayList<String> response = new ArrayList<>();
-        String request_url = guard_url + url;
-        URL obj;
-
-        try {
-            obj = new URL(request_url);
-            System.out.println("URL: " + request_url);
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-            con.setRequestMethod("POST");
-            con.setRequestProperty("User-Agent", "Mozilla/5.0");
-            con.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
-            con.setDoOutput(true);
-            try (OutputStream os = con.getOutputStream()) {
-                byte[] input = content.getBytes("utf-8");
-                os.write(input, 0, input.length);           
-            }
-
-            if (con.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                String inputLine;
-
-                while ((inputLine = in.readLine()) != null) {
-                    response.add(inputLine);
-                    //System.out.println(inputLine);
+                    // System.out.println(inputLine);
                 }
                 in.close();
             }
@@ -140,5 +104,3 @@ public class GuardConnection {
         return response;
     }
 }
-
-
