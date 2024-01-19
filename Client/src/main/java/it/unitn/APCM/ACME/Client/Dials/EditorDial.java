@@ -60,14 +60,14 @@ public class EditorDial extends JDialog {
         GridBagConstraints button_constraints =  new GridBagConstraints();
         createButtons(buttons, user, text_area);
         updateButtons(buttons, buttons_panel, button_constraints);
-
-        JScrollPane files_scroll_pane = new JScrollPane(buttons_panel);
+    
+        JScrollPane files_ScrollPane = new JScrollPane(buttons_panel);
         cs.gridx = 1;
         cs.gridy = 0;
         cs.gridwidth = 1;
         cs.weightx = 0.3;
         cs.weighty = 1.0;
-        panel.add(files_scroll_pane, cs);
+        panel.add(files_ScrollPane, cs);        
 
         // Bottom panel with Save and Open buttons
         JPanel input_panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -111,6 +111,7 @@ public class EditorDial extends JDialog {
                     });
                     buttons.add(button);
                     updateButtons(buttons, buttons_panel, button_constraints);
+                    panel.revalidate();
                 }
             }
         });
@@ -137,13 +138,13 @@ public class EditorDial extends JDialog {
     }
 
     private void updateButtons(ArrayList<JButton> buttons, JPanel buttons_panel, GridBagConstraints button_constraints){
-       
         buttons_panel.removeAll();
-
+       
+        button_constraints =  new GridBagConstraints();
         button_constraints.fill = GridBagConstraints.HORIZONTAL;
         button_constraints.weightx = 1.0;
         button_constraints.insets = new Insets(5, 10, 5, 10); // Adjust spacing between buttons
-
+       
         for(int i = 0; i < buttons.size(); i++){
             button_constraints.gridx = 0;
             button_constraints.gridy = i;
@@ -176,6 +177,21 @@ public class EditorDial extends JDialog {
 
             buttons.add(button);
         }
+    }
+
+    private void updateScrollPanel(JPanel buttons_panel, JPanel panel, GridBagConstraints cs){
+        if(files_ScrollPane != null){
+            System.out.println("REMOVED");
+            panel.remove(files_ScrollPane);
+        }
+        files_ScrollPane = new JScrollPane(buttons_panel);
+        cs.gridx = 1;
+        cs.gridy = 0;
+        cs.gridwidth = 1;
+        cs.weightx = 0.3;
+        cs.weighty = 1.0;
+        panel.add(files_ScrollPane, cs);
+        //panel.revalidate();
     }
 }
 
