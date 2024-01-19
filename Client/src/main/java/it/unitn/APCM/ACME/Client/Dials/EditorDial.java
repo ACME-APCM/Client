@@ -38,10 +38,6 @@ public class EditorDial extends JDialog {
         int right_inset = 10;
         cs.insets = new Insets(top_inset, left_inset, bottom_inset, right_inset);
 
-        Border border = BorderFactory.createLineBorder(Color.BLACK, 1);
-        JTextArea path_area = new JTextArea(1, 20);
-        path_area.setBorder(border);
-
         // Left panel with scrollable text
         JTextArea text_area = new JTextArea(30, 60);
         JScrollPane chat_scroll = new JScrollPane(text_area);
@@ -75,14 +71,21 @@ public class EditorDial extends JDialog {
         btn_save.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 // Add functionality for save button here
-                ArrayList<String> response = conn.http_request_saveFile(
-                        "file?email=" + user.getEmail() + "&password=" + user.getPassword() + "&path=" + path,
+                String response = conn.http_request_saveFile(
+                        "file?email=" + user.getEmail() + "&path=" + path,
                         text_area.getText());
-                String message = "";
-                for (String res : response) {
-                    message += res;
-                }
-                lbl_message.setText(message);
+                
+                if (response.equals("success")) {
+                    JOptionPane.showMessageDialog(EditorDial.this,
+                            "File saved",
+                            "Save info",
+                            JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(EditorDial.this,
+                            "Error in saving file",
+                            "Save info",
+                            JOptionPane.ERROR_MESSAGE);
+                }        
             }
         });
 
@@ -116,7 +119,6 @@ public class EditorDial extends JDialog {
             }
         });
 
-        input_panel.add(path_area);
         input_panel.add(btn_new);
         input_panel.add(btn_save);
         input_panel.add(lbl_message);
@@ -170,28 +172,13 @@ public class EditorDial extends JDialog {
                     ClientResponse response = conn
                             .httpRequestOpen("file?email=" + user.getEmail() + "&path=" + path);
                     text_area.setText(response.get_text());
-                    btn_save.setEnabled(response.get_w_mode());
+                    //btn_save.setEnabled(response.get_w_mode());
                     lbl_message.setText("File opened");
                 }
             });
 
             buttons.add(button);
         }
-    }
-
-    private void updateScrollPanel(JPanel buttons_panel, JPanel panel, GridBagConstraints cs){
-        if(files_ScrollPane != null){
-            System.out.println("REMOVED");
-            panel.remove(files_ScrollPane);
-        }
-        files_ScrollPane = new JScrollPane(buttons_panel);
-        cs.gridx = 1;
-        cs.gridy = 0;
-        cs.gridwidth = 1;
-        cs.weightx = 0.3;
-        cs.weighty = 1.0;
-        panel.add(files_ScrollPane, cs);
-        //panel.revalidate();
     }
 }
 

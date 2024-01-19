@@ -69,8 +69,8 @@ public class GuardConnection {
         return response;
     }
 
-    public ArrayList<String> http_request_saveFile(String url, String content) {
-        ArrayList<String> response = new ArrayList<>();
+    public String http_request_saveFile(String url, String content) {
+        String response = "error";
         String request_url = guard_url + url;
         URL obj;
 
@@ -92,8 +92,7 @@ public class GuardConnection {
                 String inputLine;
 
                 while ((inputLine = in.readLine()) != null) {
-                    response.add(inputLine);
-                    // System.out.println(inputLine);
+                    response = inputLine;
                 }
                 in.close();
             }
