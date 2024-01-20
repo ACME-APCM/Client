@@ -106,12 +106,21 @@ public class EditorDial extends JDialog {
                             path = e.getActionCommand();
                             ClientResponse response = conn
                                     .httpRequestOpen("file?email=" + user.getEmail() + "&path=" + path);
-                            text_area.setText(response.get_text());
-                            selected_file.setText(path);
-                            btn_save.setEnabled(response.get_w_mode());
+
+                            if (response != null) {
+                                text_area.setText(response.get_text());
+                                selected_file.setText(path);
+                                btn_save.setEnabled(response.get_w_mode());
+                            } else {
+                                JOptionPane.showMessageDialog(EditorDial.this,
+                                        "Error in opening file",
+                                        "Open info",
+                                        JOptionPane.ERROR_MESSAGE);
+                            }
                         }
                     });
-                    selected_file.setText(new_file_dial.getFilePath());
+                    path = new_file_dial.getFilePath();
+                    selected_file.setText(path);
                     text_area.setText("");
                     buttons.add(button);
                     updateButtons(buttons, buttons_panel, button_constraints);
@@ -172,9 +181,17 @@ public class EditorDial extends JDialog {
                         path = e.getActionCommand();
                         ClientResponse response = conn
                                 .httpRequestOpen("file?email=" + user.getEmail() + "&path=" + path);
-                        text_area.setText(response.get_text());
-                        selected_file.setText(path);
-                        btn_save.setEnabled(response.get_w_mode());
+
+                        if (response != null) {
+                            text_area.setText(response.get_text());
+                            selected_file.setText(path);
+                            btn_save.setEnabled(response.get_w_mode());
+                        } else {
+                            JOptionPane.showMessageDialog(EditorDial.this,
+                                    "Error in opening file",
+                                    "Open info",
+                                    JOptionPane.ERROR_MESSAGE);
+                        }      
                     }
                 });
 

@@ -61,6 +61,8 @@ public class GuardConnection {
                     response = (new JSONToArray()).convertToClientResponse(inputLine);
                 }
                 in.close();
+            } else {
+                response = null;
             }
         } catch (IOException e) {
             e.printStackTrace();
