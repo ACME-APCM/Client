@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import it.unitn.APCM.ACME.Client.ClientCommon.ClientResponse;
@@ -13,7 +14,7 @@ import it.unitn.APCM.ACME.Client.ClientCommon.JSONToArray;
 
 public class GuardConnection {
 
-    private final static String guard_url = "http://localhost:8090/api/v1/";
+    private final static String guard_url = "https://localhost:8090/api/v1/";
 
     public String httpRequest(String url) {
         String response = "";
@@ -85,7 +86,7 @@ public class GuardConnection {
             con.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
             con.setDoOutput(true);
             try (OutputStream os = con.getOutputStream()) {
-                byte[] input = content.getBytes("utf-8");
+                byte[] input = content.getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);
             }
 
