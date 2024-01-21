@@ -8,6 +8,7 @@
     <artifactId>Client</artifactId>
     <version>1.0-SNAPSHOT</version>
     <description>ACME implementation for Client</description>
+    <packaging>jar</packaging>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
