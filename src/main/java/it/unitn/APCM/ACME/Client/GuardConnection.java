@@ -21,55 +21,9 @@ public class GuardConnection {
     public String httpRequest(String url) {
         //System.setProperty("javax.net.debug", "all");
         String response = "";
-        String request_url = guard_url + url;
-        URL httpsURL;
+        HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
 
         try {
-            httpsURL = new URL(request_url);
-
-            if (kstore_pw == null || k_pw == null) {
-                throw new NullPointerException();
-            }
-
-            // KeyManagerFactory
-            KeyStore ks = KeyStore.getInstance("JKS");
-            InputStream kstoreStream = ClassLoader.getSystemClassLoader().getResourceAsStream("Client_keystore.jks");
-            ks.load(kstoreStream, kstore_pw.toCharArray());
-            KeyManagerFactory kmf = KeyManagerFactory.getInstance("PKIX");
-            kmf.init(ks, k_pw.toCharArray());
-            X509ExtendedKeyManager x509km = null;
-            for (KeyManager keyManager : kmf.getKeyManagers()) {
-                if (keyManager instanceof X509ExtendedKeyManager) {
-                    x509km = (X509ExtendedKeyManager) keyManager;
-                    break;
-                }
-            }
-            if (x509km == null) throw new NullPointerException();
-
-            // TrustManagerFactory
-            KeyStore ts = KeyStore.getInstance("JKS");
-            InputStream tstoreStream = ClassLoader.getSystemClassLoader().getResourceAsStream("Client_truststore.jks");
-            ts.load(tstoreStream, null);
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance("PKIX");
-            tmf.init(ts);
-            X509ExtendedTrustManager x509tm = null;
-            for (TrustManager trustManager : tmf.getTrustManagers()) {
-                if (trustManager instanceof X509ExtendedTrustManager) {
-                    x509tm = (X509ExtendedTrustManager) trustManager;
-                    break;
-                }
-            }
-            if (x509tm == null) throw new NullPointerException();
-
-            SSLContext sc = SSLContext.getInstance("TLSv1.3");
-            sc.init(new KeyManager[]{x509km}, new TrustManager[]{x509tm}, new java.security.SecureRandom());
-
-            HttpURLConnection con = (HttpURLConnection) httpsURL.openConnection();
-            if (con instanceof HttpsURLConnection) {
-                ((HttpsURLConnection)con).setSSLSocketFactory(sc.getSocketFactory());
-            }
-
-
             con.setRequestMethod("GET");
             con.setRequestProperty("User-Agent", "ACME");
             if (con.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
@@ -81,8 +35,7 @@ public class GuardConnection {
                 }
                 in.close();
             }
-        } catch (IOException | UnrecoverableKeyException | CertificateException | NoSuchAlgorithmException |
-				 KeyStoreException | KeyManagementException e) {
+        } catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 
