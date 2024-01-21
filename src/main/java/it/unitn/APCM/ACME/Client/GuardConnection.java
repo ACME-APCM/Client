@@ -17,7 +17,8 @@ public class GuardConnection {
 
         try {
             con.setRequestMethod("GET");
-            if (con.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
+            int code = con.getResponseCode();
+            if (code == HttpURLConnection.HTTP_OK || code == HttpURLConnection.HTTP_CREATED) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
 
