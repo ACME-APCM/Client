@@ -171,7 +171,7 @@ public class EditorDial extends JDialog {
     private void createButtons(ArrayList<JButton> buttons, User user, JTextArea text_area){
         
         String packed_response = conn.httpRequest("files");
-        if(packed_response != ""){
+        if(packed_response != null){
             ArrayList<String> response = new ArrayList<String>(Arrays.asList(packed_response.split(",")));
 
             for (String res : response) {
