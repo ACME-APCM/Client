@@ -92,7 +92,7 @@ public class NewFileDial extends JDialog {
                         "newFile?email=" + user.getEmail() + "&path=" + file_path + "&r_groups=" + tf_r_groups.getText()
                                 + "&rw_groups=" + tf_rw_groups.getText());
 
-                if (response.equals("success")) {
+                if (response != null && response.equals("success")) {
                     JOptionPane.showMessageDialog(NewFileDial.this,
                             "File created successfully",
                             "New file created",
