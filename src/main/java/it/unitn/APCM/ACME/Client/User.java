@@ -5,11 +5,13 @@ public class User {
     private String email;
     private String password;
     private boolean authenticated;
+    private String jwt;
 
     public User() {
         this.email = "";
         this.password = "";
-        authenticated = false;
+        this.authenticated = false;
+        this.jwt = "";
     }
 
     public String getEmail() {
@@ -24,6 +26,10 @@ public class User {
         return authenticated;
     }
 
+    public String getJwt() {
+        return jwt;
+    }
+
     public void setEmail(String email) {
         this.email = email;
     }
@@ -34,5 +40,9 @@ public class User {
 
     public void setAuthenticated(boolean authenticated) {
         this.authenticated = authenticated;
+    }
+
+    public void setJwt(String jwt) {
+        this.jwt = jwt;
     }
 }

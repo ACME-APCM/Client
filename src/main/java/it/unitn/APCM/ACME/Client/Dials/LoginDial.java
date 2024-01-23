@@ -66,16 +66,11 @@ public class LoginDial extends JDialog {
             public void actionPerformed(ActionEvent e) {
                 GuardConnection conn = new GuardConnection();
 
-                String response = conn.httpRequest("login?email=" + get_email() + "&password=" + get_password());
-
-                if (response != null && response.equals("success")) {
+                if (conn.httpRequestLogin("login", get_email(), get_password(), user)) {
                     JOptionPane.showMessageDialog(LoginDial.this,
                             "Authenticated successfully",
                             "Login",
                             JOptionPane.INFORMATION_MESSAGE);
-                    user.setAuthenticated(true);
-                    user.setEmail(get_email());
-                    user.setPassword(get_password());
                     dispose();
                 } else {
                     JOptionPane.showMessageDialog(LoginDial.this,

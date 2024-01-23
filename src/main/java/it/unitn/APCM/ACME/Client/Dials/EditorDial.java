@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
 import it.unitn.APCM.ACME.Client.GuardConnection;
@@ -51,30 +50,28 @@ public class EditorDial extends JDialog {
         cs.weighty = 1.0;
         panel.add(chat_panel, cs);
 
-        JPanel buttons_panel  = new JPanel(new GridBagLayout());
-        GridBagConstraints button_constraints =  new GridBagConstraints();
+        JPanel buttons_panel = new JPanel(new GridBagLayout());
+        GridBagConstraints button_constraints = new GridBagConstraints();
         createButtons(buttons, user, text_area);
         updateButtons(buttons, buttons_panel, button_constraints);
-    
+
         JScrollPane files_ScrollPane = new JScrollPane(buttons_panel);
         cs.gridx = 1;
         cs.gridy = 0;
         cs.gridwidth = 1;
         cs.weightx = 0.3;
         cs.weighty = 1.0;
-        panel.add(files_ScrollPane, cs);        
+        panel.add(files_ScrollPane, cs);
 
         // Bottom panel with Save and Open buttons
         JPanel input_panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         btn_save = new JButton("Save");
         btn_save.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // Add functionality for save button here
-                String response = conn.http_request_saveFile(
-                        "file?email=" + user.getEmail() + "&path=" + path,
-                        text_area.getText());
                 
-                if (response.equals("success")) {
+                String url = "file?email=" + user.getEmail() + "&path=" + path;
+
+                if (conn.httpRequestSave(url, text_area.getText(), user.getJwt())) {
                     JOptionPane.showMessageDialog(EditorDial.this,
                             "File saved",
                             "Save info",
@@ -84,7 +81,7 @@ public class EditorDial extends JDialog {
                             "Error in saving file",
                             "Save info",
                             JOptionPane.ERROR_MESSAGE);
-                }        
+                }
             }
         });
 
@@ -105,7 +102,7 @@ public class EditorDial extends JDialog {
                         public void actionPerformed(ActionEvent e) {
                             path = e.getActionCommand();
                             ClientResponse response = conn
-                                    .httpRequestOpen("file?email=" + user.getEmail() + "&path=" + path);
+                                    .httpRequestOpen("file?email=" + user.getEmail() + "&path=" + path, user.getJwt());
 
                             if (response != null) {
                                 text_area.setText(response.get_text());
@@ -148,15 +145,16 @@ public class EditorDial extends JDialog {
         setLocationRelativeTo(parent);
     }
 
-    private void updateButtons(ArrayList<JButton> buttons, JPanel buttons_panel, GridBagConstraints button_constraints){
+    private void updateButtons(ArrayList<JButton> buttons, JPanel buttons_panel,
+            GridBagConstraints button_constraints) {
         buttons_panel.removeAll();
-       
-        button_constraints =  new GridBagConstraints();
+
+        button_constraints = new GridBagConstraints();
         button_constraints.fill = GridBagConstraints.HORIZONTAL;
         button_constraints.weightx = 1.0;
         button_constraints.insets = new Insets(5, 10, 5, 10); // Adjust spacing between buttons
-       
-        for(int i = 0; i < buttons.size(); i++){
+
+        for (int i = 0; i < buttons.size(); i++) {
             button_constraints.gridx = 0;
             button_constraints.gridy = i;
             button_constraints.weightx = 1.0; // Allow buttons to expand horizontally
@@ -168,10 +166,10 @@ public class EditorDial extends JDialog {
         }
     }
 
-    private void createButtons(ArrayList<JButton> buttons, User user, JTextArea text_area){
-        
-        String packed_response = conn.httpRequest("files");
-        if(packed_response != null){
+    private void createButtons(ArrayList<JButton> buttons, User user, JTextArea text_area) {
+
+        String packed_response = conn.httpRequestFile("files?email=" + user.getEmail(), user.getJwt());
+        if (packed_response != null) {
             ArrayList<String> response = new ArrayList<String>(Arrays.asList(packed_response.split(",")));
 
             for (String res : response) {
@@ -180,7 +178,7 @@ public class EditorDial extends JDialog {
                     public void actionPerformed(ActionEvent e) {
                         path = e.getActionCommand();
                         ClientResponse response = conn
-                                .httpRequestOpen("file?email=" + user.getEmail() + "&path=" + path);
+                                .httpRequestOpen("file?email=" + user.getEmail() + "&path=" + path, user.getJwt());
 
                         if (response != null) {
                             text_area.setText(response.get_text());
@@ -191,7 +189,7 @@ public class EditorDial extends JDialog {
                                     "Error in opening file",
                                     "Open info",
                                     JOptionPane.ERROR_MESSAGE);
-                        }      
+                        }
                     }
                 });
 

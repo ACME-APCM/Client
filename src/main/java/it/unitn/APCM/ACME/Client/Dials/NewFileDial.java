@@ -88,11 +88,11 @@ public class NewFileDial extends JDialog {
 
                 file_path = tf_file_path.getText();
 
-                String response = conn.httpRequest(
-                        "newFile?email=" + user.getEmail() + "&path=" + file_path + "&r_groups=" + tf_r_groups.getText()
-                                + "&rw_groups=" + tf_rw_groups.getText());
-
-                if (response != null && response.equals("success")) {
+                String url = "newFile?email=" + user.getEmail() + "&path=" + file_path + "&r_groups="
+                        + tf_r_groups.getText()
+                        + "&rw_groups=" + tf_rw_groups.getText();
+                        
+                if (conn.httpRequestCreate(url, user.getJwt())) {
                     JOptionPane.showMessageDialog(NewFileDial.this,
                             "File created successfully",
                             "New file created",
