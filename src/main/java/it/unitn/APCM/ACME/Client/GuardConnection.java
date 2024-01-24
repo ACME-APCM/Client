@@ -49,7 +49,6 @@ public class GuardConnection {
                 while ((inputLine = in.readLine()) != null) {
                     if (inputLine.equals("success")) {
                         user.setEmail(email);
-                        user.setPassword(password);
                         user.setAuthenticated(true);
                         user.setJwt(con.getHeaderField("jwt"));
                         return true;
@@ -65,14 +64,14 @@ public class GuardConnection {
 
     }
 
-    public String httpRequestFile(String url, String jwt) {
+    public String httpRequestFile(String url, User user) {
         String response = null;
         HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
 
-        con.setRequestProperty("jwt", jwt);
+        con.setRequestProperty("jwt", user.getJwt());
 
         try {
-            con.setRequestMethod("GET");
+            con.setRequestMethod("GET"); //Sending request
             if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
@@ -81,10 +80,11 @@ public class GuardConnection {
                     response =  inputLine;
                 }
                 in.close();
-            } else {
-                response = null;
+            } else if (con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                user.setValid_session(false);
             }
         } catch (IOException e) {
+            user.setValid_session(false);
             throw new RuntimeException(e);
         }
 

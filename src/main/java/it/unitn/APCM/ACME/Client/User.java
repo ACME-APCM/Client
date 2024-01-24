@@ -3,23 +3,19 @@ package it.unitn.APCM.ACME.Client;
 public class User {
 
     private String email;
-    private String password;
     private boolean authenticated;
     private String jwt;
+    private boolean valid_session;
 
     public User() {
         this.email = "";
-        this.password = "";
         this.authenticated = false;
         this.jwt = "";
+        this.valid_session = false;
     }
 
     public String getEmail() {
         return email;
-    }
-
-    public String getPassword() {
-        return password;
     }
 
     public boolean isAuthenticated() {
@@ -30,12 +26,12 @@ public class User {
         return jwt;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public boolean isValid_session() {
+        return valid_session;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setAuthenticated(boolean authenticated) {
@@ -44,5 +40,9 @@ public class User {
 
     public void setJwt(String jwt) {
         this.jwt = jwt;
+    }
+
+    public void setValid_session(boolean valid_session) {
+        this.valid_session = valid_session;
     }
 }

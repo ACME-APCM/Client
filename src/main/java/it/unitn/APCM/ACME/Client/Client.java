@@ -9,29 +9,26 @@ public class Client {
 
     public static void main(String args[]) {
 
-        User user = new User();
-
-        /*
-         * LOGIN DIALOG
-         */
-        final JFrame login_frame = new JFrame("Login");
-        LoginDial login_dial = new LoginDial(login_frame, user);
-        login_dial.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        login_dial.setSize(500, 150);
-        login_dial.setLocationRelativeTo(null);
-        login_dial.setVisible(true);
+//        /*
+//         * LOGIN DIALOG
+//         */
+//        final JFrame login_frame = new JFrame("Login");
+//        LoginDial login_dial = new LoginDial(login_frame, user);
+//        login_dial.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//        login_dial.setSize(500, 150);
+//        login_dial.setLocationRelativeTo(null);
+//        login_dial.setVisible(true);
 
         /*
          * NORMAL DIALOG
          */
-        if (user.isAuthenticated()) {
-            final JFrame Editor_frame = new JFrame("Editor");
-            EditorDial editor_dial = new EditorDial(Editor_frame, user);
-            editor_dial.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            editor_dial.setSize(1500, 700);
-            editor_dial.setLocationRelativeTo(null);
-            editor_dial.setVisible(true);
-        }
+        final JFrame Editor_frame = new JFrame("Editor");
+        EditorDial editor_dial = new EditorDial(Editor_frame);
+        editor_dial.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        editor_dial.setSize(1500, 700);
+        editor_dial.setLocationRelativeTo(null);
+        editor_dial.setVisible(true);
+
         System.exit(0);
     }
 }

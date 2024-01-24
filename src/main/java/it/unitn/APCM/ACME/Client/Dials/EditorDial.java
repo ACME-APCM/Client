@@ -21,8 +21,13 @@ public class EditorDial extends JDialog {
     JLabel selected_file = new JLabel("No text selected");
     GuardConnection conn = new GuardConnection();
 
-    public EditorDial(Frame parent, User user) {
+    public EditorDial(Frame parent) {
         super(parent, "Editor", true);
+
+        User user = new User();
+        if (!user.isAuthenticated()) {
+            newLogin(user);
+        }
 
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints cs = new GridBagConstraints();
@@ -68,15 +73,20 @@ public class EditorDial extends JDialog {
         btn_save = new JButton("Save");
         btn_save.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                
-                String url = "file?email=" + user.getEmail() + "&path=" + path;
+                String url = null;
+                if (user != null && path != null) {
+                    url = "file?email=" + user.getEmail() + "&path=" + path;
 
-                if (conn.httpRequestSave(url, text_area.getText(), user.getJwt())) {
-                    JOptionPane.showMessageDialog(EditorDial.this,
-                            "File saved",
-                            "Save info",
-                            JOptionPane.INFORMATION_MESSAGE);
-                } else {
+                    if (conn.httpRequestSave(url, text_area.getText(), user.getJwt())) {
+                        JOptionPane.showMessageDialog(EditorDial.this,
+                                "File saved",
+                                "Save info",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        url = null;
+                    }
+                }
+                if (url == null) {
                     JOptionPane.showMessageDialog(EditorDial.this,
                             "Error in saving file",
                             "Save info",
@@ -143,6 +153,7 @@ public class EditorDial extends JDialog {
         setSize(1000, 600);
         setResizable(true);
         setLocationRelativeTo(parent);
+
     }
 
     private void updateButtons(ArrayList<JButton> buttons, JPanel buttons_panel,
@@ -168,8 +179,8 @@ public class EditorDial extends JDialog {
 
     private void createButtons(ArrayList<JButton> buttons, User user, JTextArea text_area) {
 
-        String packed_response = conn.httpRequestFile("files?email=" + user.getEmail(), user.getJwt());
-        if (packed_response != null) {
+        String packed_response = conn.httpRequestFile("files?email=" + user.getEmail(), user);
+        if (packed_response != null && user.isValid_session()) {
             ArrayList<String> response = new ArrayList<String>(Arrays.asList(packed_response.split(",")));
 
             for (String res : response) {
@@ -196,6 +207,22 @@ public class EditorDial extends JDialog {
                 buttons.add(button);
             }
         }
+        else {
+            JOptionPane.showMessageDialog(EditorDial.this,
+                    "Session expired",
+                    "Opening",
+                    JOptionPane.ERROR_MESSAGE);
+            newLogin(user);
+        }
+    }
+
+    private void newLogin(User user) {
+        final JFrame login_frame = new JFrame("Login");
+        LoginDial login_dial = new LoginDial(login_frame, user);
+        login_dial.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        login_dial.setSize(500, 150);
+        login_dial.setLocationRelativeTo(null);
+        login_dial.setVisible(true);
     }
 }
 
