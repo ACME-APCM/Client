@@ -8,8 +8,6 @@ import javax.swing.border.LineBorder;
 
 import it.unitn.APCM.ACME.Client.GuardConnection;
 import it.unitn.APCM.ACME.Client.User;
-import it.unitn.APCM.ACME.Client.ClientCommon.ClientCall;
-import it.unitn.APCM.ACME.Client.ClientCommon.DisplayMessage;
 
 public class NewFileDial extends JDialog {
 
@@ -22,7 +20,9 @@ public class NewFileDial extends JDialog {
     private JButton btn_create;
     private boolean succeeded;
     private String file_path = "";
-    GuardConnection conn = new GuardConnection();
+    private GuardConnection conn = new GuardConnection();
+    private CommonDialFunction commonFunction = new CommonDialFunction();
+
 
     //Dial used to create a new file: it requires path and read/write permission
     public NewFileDial(Frame parent, User user) {
@@ -102,15 +102,15 @@ public class NewFileDial extends JDialog {
                 //Check the status
                 if (res == 0) {
                     // if the file is created successfully, show the relative message and then close the dial
-                    (new DisplayMessage()).showOptionPane(NewFileDial.this,"New file created","File created successfully", JOptionPane.INFORMATION_MESSAGE);
+                    commonFunction.showOptionPane(NewFileDial.this,"New file created","File created successfully", JOptionPane.INFORMATION_MESSAGE);
                     succeeded = true;
                     dispose();
                 } else if(res == 2){
                     // if the jwt token is expired, request a new login to the user
-                    (new ClientCall()).newLogin(user);
+                    commonFunction.newLogin(user);
                 } else {
                     // Generic error in the creation of the file, show a message and erase the text area
-                    (new DisplayMessage()).showOptionPane(NewFileDial.this,"Creation report","Error in the cretion of file", JOptionPane.ERROR_MESSAGE);
+                    commonFunction.showOptionPane(NewFileDial.this,"Creation report","Error in the cretion of file", JOptionPane.ERROR_MESSAGE);
                     tf_file_path.setText("");
                     tf_r_groups.setText("");
                     tf_rw_groups.setText("");

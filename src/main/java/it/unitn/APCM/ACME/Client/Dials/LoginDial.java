@@ -8,7 +8,6 @@ import javax.swing.border.*;
 
 import it.unitn.APCM.ACME.Client.GuardConnection;
 import it.unitn.APCM.ACME.Client.User;
-import it.unitn.APCM.ACME.Client.ClientCommon.DisplayMessage;
 
 //Dial used for the login
 public class LoginDial extends JDialog {
@@ -18,6 +17,8 @@ public class LoginDial extends JDialog {
     private JLabel lbl_email;
     private JLabel lbl_password;
     private JButton btn_login;
+    private CommonDialFunction commonFunction = new CommonDialFunction();
+
 
     public LoginDial(Frame parent, User user) {
         super(parent, "Login", true);
@@ -71,11 +72,11 @@ public class LoginDial extends JDialog {
                 //Send a request to the guardConnection
                 if (conn.httpRequestLogin("login", get_email(), get_password(), user)) {
                     // if login successful show a message and then close the login dial
-                    (new DisplayMessage()).showOptionPane(LoginDial.this, "Login", "Authenticated successfully", JOptionPane.INFORMATION_MESSAGE);      
+                    commonFunction.showOptionPane(LoginDial.this, "Login", "Authenticated successfully", JOptionPane.INFORMATION_MESSAGE);      
                     dispose();
                 } else {
                     //Show an error message if login is not successful and erase the text_area
-                    (new DisplayMessage()).showOptionPane(LoginDial.this, "Login", "Invalid username or password", JOptionPane.ERROR_MESSAGE);      
+                    commonFunction.showOptionPane(LoginDial.this, "Login", "Invalid username or password", JOptionPane.ERROR_MESSAGE);      
                     tf_email.setText("");
                     pf_password.setText("");
                 }

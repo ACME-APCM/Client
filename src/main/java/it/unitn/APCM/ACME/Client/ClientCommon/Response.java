@@ -2,7 +2,7 @@ package it.unitn.APCM.ACME.Client.ClientCommon;
 
 //Class used to return a response for GuardConnection class to Editor dial
 public class Response {
-    int status; // Status related to the response => 0: OK, 1: INTERNAL:ERROR, 2: UNAUTHORIZED
+    int status; // Status related to the response => 0: OK, 1: INTERNAL_ERROR, 2: UNAUTHORIZED
     Object response; // other response info which can be string or clientResponse in our case
 
     public Response(){

@@ -10,9 +10,7 @@ import javax.swing.border.LineBorder;
 
 import it.unitn.APCM.ACME.Client.GuardConnection;
 import it.unitn.APCM.ACME.Client.User;
-import it.unitn.APCM.ACME.Client.ClientCommon.ClientCall;
 import it.unitn.APCM.ACME.Client.ClientCommon.ClientResponse;
-import it.unitn.APCM.ACME.Client.ClientCommon.DisplayMessage;
 import it.unitn.APCM.ACME.Client.ClientCommon.Response;
 
 //Main dial of the program
@@ -21,10 +19,11 @@ public class EditorDial extends JDialog {
     private JButton btn_save;
     private JButton btn_new;
     private String path;
-    ArrayList<JButton> buttons = new ArrayList<JButton>(); //list of the button representing the files
-    JLabel selected_file = new JLabel("No file selected"); //Show the file opened
-    GuardConnection conn = new GuardConnection();
-    JTextArea text_area;
+    private ArrayList<JButton> buttons = new ArrayList<JButton>(); //list of the button representing the files
+    private JLabel selected_file = new JLabel("No file selected"); //Show the file opened
+    private GuardConnection conn = new GuardConnection();
+    private CommonDialFunction commonFunction = new CommonDialFunction();
+    private JTextArea text_area;
 
     public EditorDial(Frame parent) {
         super(parent, "Editor", true);
@@ -32,7 +31,7 @@ public class EditorDial extends JDialog {
         User user = new User();
         // Require the login
         if (!user.isAuthenticated()) {
-            (new ClientCall()).newLogin(user);
+            commonFunction.newLogin(user);
         }
 
         JPanel panel = new JPanel(new GridBagLayout());
@@ -89,10 +88,10 @@ public class EditorDial extends JDialog {
                     //Analyze the response from the Guard
                     if (res == 0) {
                         //if file saved successfully, show an information message
-                        (new DisplayMessage()).showOptionPane(EditorDial.this,"Save info", "File saved", JOptionPane.INFORMATION_MESSAGE);
+                        commonFunction.showOptionPane(EditorDial.this,"Save info", "File saved", JOptionPane.INFORMATION_MESSAGE);
                     } else if(res == 2){
                         //if jwt token is not valid or expired, require the login
-                        (new ClientCall()).newLogin(user);
+                        commonFunction.newLogin(user);
                     } else {
                         // if not, an error is occured, so set url to null and then an error message is displayed
                         url = null;
@@ -100,7 +99,7 @@ public class EditorDial extends JDialog {
                 }
                 if (url == null) {
                     //Show an error message if save failed
-                    (new DisplayMessage()).showOptionPane(EditorDial.this,"Save Info", "Error in saving file", JOptionPane.ERROR_MESSAGE);
+                    commonFunction.showOptionPane(EditorDial.this,"Save Info", "Error in saving file", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -204,10 +203,10 @@ public class EditorDial extends JDialog {
             }
         } else if (status == 2){
             //if jwt token is expired or is not valid, require a new login
-            (new ClientCall()).newLogin(user);
+            commonFunction.newLogin(user);
         } else if(status == 1) {
             // Open failed, show error message
-            (new DisplayMessage()).showOptionPane(EditorDial.this, "Opening", "Error in opening file", JOptionPane.ERROR_MESSAGE);
+            commonFunction.showOptionPane(EditorDial.this, "Opening", "Error in opening file", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -225,10 +224,10 @@ public class EditorDial extends JDialog {
             btn_save.setEnabled(response.get_w_mode()); //enable save button depending on the permission of the user
         } else if(status == 2){
             // if jwt token is invalid or expired, require a new login
-            (new ClientCall()).newLogin(user);
+            commonFunction.newLogin(user);
         } else {
             // if failed, show an error message
-            (new DisplayMessage()).showOptionPane(EditorDial.this, "Open info", "Error in opening file", JOptionPane.ERROR_MESSAGE);
+            commonFunction.showOptionPane(EditorDial.this, "Open info", "Error in opening file", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
