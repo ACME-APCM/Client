@@ -44,7 +44,7 @@ public class GuardConnection {
             try (OutputStream os = con.getOutputStream()) {
                 os.write(jsonInputString.getBytes(StandardCharsets.UTF_8));
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                return false;
             }
 
             // Analyze the response code
@@ -63,7 +63,7 @@ public class GuardConnection {
                 in.close();
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            return false;
         }
 
         return false;
@@ -113,7 +113,8 @@ public class GuardConnection {
                 response.setStatus(2);
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            // return empty response which is by default error
+            return new Response();
         }
 
         return response;
@@ -148,7 +149,8 @@ public class GuardConnection {
                 res.setStatus(2);
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            // return empty response which is by default error
+            return new Response();
         }
 
         return res;
@@ -181,7 +183,8 @@ public class GuardConnection {
                 res.setStatus(2);
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            // return empty response which is by default error
+            return new Response();
         }
 
         return res;
@@ -207,7 +210,8 @@ public class GuardConnection {
                 byte[] input = content.getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);
             } catch (IOException | NullPointerException e) {
-                throw new RuntimeException(e);
+                // return empty response which is by default error
+                return new Response();
             }
 
             // Analyze the reponse code
@@ -227,7 +231,8 @@ public class GuardConnection {
                 res.setStatus(2);
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            // return empty response which is by default error
+            return new Response();
         }
 
         return res;
