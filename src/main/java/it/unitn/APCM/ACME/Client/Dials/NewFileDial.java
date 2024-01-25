@@ -110,7 +110,7 @@ public class NewFileDial extends JDialog {
                     commonFunction.newLogin(user);
                 } else {
                     // Generic error in the creation of the file, show a message and erase the text area
-                    commonFunction.showOptionPane(NewFileDial.this,"Creation report","Error in the cretion of file", JOptionPane.ERROR_MESSAGE);
+                    commonFunction.showOptionPane(NewFileDial.this,"Creation report","Error in the creation of file", JOptionPane.ERROR_MESSAGE);
                     tf_file_path.setText("");
                     tf_r_groups.setText("");
                     tf_rw_groups.setText("");
