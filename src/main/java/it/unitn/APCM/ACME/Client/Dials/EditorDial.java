@@ -3,7 +3,6 @@ package it.unitn.APCM.ACME.Client.Dials;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -19,8 +18,8 @@ public class EditorDial extends JDialog {
     private JButton btn_save;
     private JButton btn_new;
     private String path;
-    private ArrayList<JButton> buttons = new ArrayList<JButton>(); //list of the button representing the files
-    private JLabel selected_file = new JLabel("No file selected"); //Show the file opened
+    private ArrayList<JButton> buttons = new ArrayList<JButton>(); // list of the button representing the files
+    private JLabel selected_file = new JLabel("No file selected"); // Show the file opened
     private GuardConnection conn = new GuardConnection();
     private CommonDialFunction commonFunction = new CommonDialFunction();
     private JTextArea text_area;
@@ -73,7 +72,7 @@ public class EditorDial extends JDialog {
         cs.weighty = 1.0;
         panel.add(files_ScrollPane, cs);
 
-        // Bottom panel with Save and  buttons
+        // Bottom panel with Save and buttons
         JPanel input_panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         btn_save = new JButton("Save");
         btn_save.addActionListener(new ActionListener() {
@@ -82,24 +81,27 @@ public class EditorDial extends JDialog {
                 String url = null;
                 if (user != null && path != null) {
                     url = "file?email=" + user.getEmail() + "&path=" + path;
-                    //Send a request to the guard
+                    // Send a request to the guard
                     int res = (conn.httpRequestSave(url, text_area.getText(), user.getJwt())).getStatus();
-                    
-                    //Analyze the response from the Guard
+
+                    // Analyze the response from the Guard
                     if (res == 0) {
-                        //if file saved successfully, show an information message
-                        commonFunction.showOptionPane(EditorDial.this,"Save info", "File saved", JOptionPane.INFORMATION_MESSAGE);
-                    } else if(res == 2){
-                        //if jwt token is not valid or expired, require the login
+                        // if file saved successfully, show an information message
+                        commonFunction.showOptionPane(EditorDial.this, "Save info", "File saved",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    } else if (res == 2) {
+                        // if jwt token is not valid or expired, require the login
                         commonFunction.newLogin(user);
                     } else {
-                        // if not, an error is occured, so set url to null and then an error message is displayed
+                        // if not, an error is occured, so set url to null and then an error message is
+                        // displayed
                         url = null;
                     }
                 }
                 if (url == null) {
-                    //Show an error message if save failed
-                    commonFunction.showOptionPane(EditorDial.this,"Save Info", "Error in saving file", JOptionPane.ERROR_MESSAGE);
+                    // Show an error message if save failed
+                    commonFunction.showOptionPane(EditorDial.this, "Save Info", "Error in saving file",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -107,7 +109,7 @@ public class EditorDial extends JDialog {
         btn_new = new JButton("New File");
         btn_new.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                //handle the creation of a new file, call the associated dial
+                // handle the creation of a new file, call the associated dial
                 final JFrame new_file_frame = new JFrame("New file");
                 NewFileDial new_file_dial = new NewFileDial(new_file_frame, user);
                 new_file_dial.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -115,23 +117,23 @@ public class EditorDial extends JDialog {
                 new_file_dial.setLocationRelativeTo(null);
                 new_file_dial.setVisible(true);
 
-                //Check the dial result
+                // Check the dial result
                 if (new_file_dial.isSucceeded()) {
-                    //If it succeeded, create a new button for the new file
+                    // If it succeeded, create a new button for the new file
                     JButton button = new JButton(new_file_dial.getFilePath());
                     button.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
-                            //Handle the open of the file
+                            // Handle the open of the file
                             openFile(user, e.getActionCommand());
                         }
                     });
-                    //Open the new file in the dial
-                    //Set path and text as empty
+                    // Open the new file in the dial
+                    // Set path and text as empty
                     path = new_file_dial.getFilePath();
                     selected_file.setText(path);
                     text_area.setText("");
                     buttons.add(button);
-                    //Call the method to add the button to the dial
+                    // Call the method to add the button to the dial
                     updateButtons(buttons, buttons_panel, button_constraints);
                     panel.revalidate();
                 }
@@ -157,8 +159,9 @@ public class EditorDial extends JDialog {
         setLocationRelativeTo(parent);
     }
 
-    //Method to update the list of the button
-    private void updateButtons(ArrayList<JButton> buttons, JPanel buttons_panel, GridBagConstraints button_constraints) {
+    // Method to update the list of the button
+    private void updateButtons(ArrayList<JButton> buttons, JPanel buttons_panel,
+            GridBagConstraints button_constraints) {
         buttons_panel.removeAll();
 
         button_constraints = new GridBagConstraints();
@@ -178,56 +181,69 @@ public class EditorDial extends JDialog {
         }
     }
 
-    //Method used to create the list of button
+    // Method used to create the list of button
     private void createButtons(ArrayList<JButton> buttons, User user, JTextArea text_area) {
-        //Send a request to retrieve the list of files
+        // Send a request to retrieve the list of files
         Response resp = conn.httpRequestFile("files?email=" + user.getEmail(), user);
-        int status = resp.getStatus();
-        String packed_response = null;
-        if(resp.getResponse() != null){
-            packed_response = resp.getResponse().toString();
-        }
-        if (status == 0 && packed_response != null) {
-            //if the status is OK and the response is set, parse it
-            ArrayList<String> response = new ArrayList<String>(Arrays.asList(packed_response.split(",")));
 
-            //For each file, create a button
-            for (String res : response) {
-                JButton button = new JButton(res);
-                button.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        openFile(user, e.getActionCommand());
+        if (resp != null) {
+            if (resp.getStatus() == 0) {
+                // if response is successfull, get the list of files
+                ArrayList<String> response = new ArrayList<>();
+
+                // Check it's an ArrayList and convert the object
+                if (resp.getResponse() instanceof ArrayList<?>) {
+                    ArrayList<?> res = (ArrayList<?>) resp.getResponse();
+                    if (res.size() > 0) {
+                        for (int i = 0; i < res.size(); i++) {
+                            Object o = res.get(i);
+                            if (o instanceof String) {
+                                response.add((String) o);
+                            }
+                        }
                     }
-                });
-                buttons.add(button);
+                }
+
+                // For each file, create a button
+                for (String res : response) {
+                    JButton button = new JButton(res);
+                    button.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent e) {
+                            openFile(user, e.getActionCommand());
+                        }
+                    });
+                    buttons.add(button);
+                }
+            } else if (resp.getStatus() == 2) {
+                // if jwt token is expired or is not valid, require a new login
+                commonFunction.newLogin(user);
+            } else if (resp.getStatus() == 1) {
+                // Open failed, show error message
+                commonFunction.showOptionPane(EditorDial.this, "Opening", "Error in opening file",
+                        JOptionPane.ERROR_MESSAGE);
             }
-        } else if (status == 2){
-            //if jwt token is expired or is not valid, require a new login
-            commonFunction.newLogin(user);
-        } else if(status == 1) {
-            // Open failed, show error message
-            commonFunction.showOptionPane(EditorDial.this, "Opening", "Error in opening file", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    //Method to open a file
-    private void openFile(User user, String path){
-        //Send a request with the path of the file to open
+    // Method to open a file
+    private void openFile(User user, String path) {
+        // Send a request with the path of the file to open
         Response res = conn.httpRequestOpen("file?email=" + user.getEmail() + "&path=" + path, user.getJwt());
         int status = res.getStatus();
-        ClientResponse response = (ClientResponse)res.getResponse();
+        ClientResponse response = (ClientResponse) res.getResponse();
 
         if (status == 0) {
             // if response is successfull, set the text
-            text_area.setText(response.get_text()); //Set path of the file to make it clear
+            text_area.setText(response.get_text()); // Set path of the file to make it clear
             selected_file.setText(path);
-            btn_save.setEnabled(response.get_w_mode()); //enable save button depending on the permission of the user
-        } else if(status == 2){
+            btn_save.setEnabled(response.get_w_mode()); // enable save button depending on the permission of the user
+        } else if (status == 2) {
             // if jwt token is invalid or expired, require a new login
             commonFunction.newLogin(user);
         } else {
             // if failed, show an error message
-            commonFunction.showOptionPane(EditorDial.this, "Open info", "Error in opening file", JOptionPane.ERROR_MESSAGE);
+            commonFunction.showOptionPane(EditorDial.this, "Open info", "Error in opening file",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 }

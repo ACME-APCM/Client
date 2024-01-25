@@ -2,11 +2,15 @@ package it.unitn.APCM.ACME.Client;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.net.HttpURLConnection;
 import javax.net.ssl.HttpsURLConnection;
 
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.unitn.APCM.ACME.Client.ClientCommon.ClientResponse;
 import it.unitn.APCM.ACME.Client.ClientCommon.JSONToArray;
@@ -14,9 +18,9 @@ import it.unitn.APCM.ACME.Client.ClientCommon.Response;
 
 public class GuardConnection {
 
-    //Method to login
+    // Method to login
     public boolean httpRequestLogin(String url, String email, String password, User user) {
-        //Create a secure connection with the guard to login
+        // Create a secure connection with the guard to login
         HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
 
         try {
@@ -32,7 +36,7 @@ public class GuardConnection {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        
+
             // Convert the JSON object to a string
             String jsonInputString = credentialsJson.toString();
 
@@ -43,11 +47,11 @@ public class GuardConnection {
                 throw new RuntimeException(e);
             }
 
-            if (con.getResponseCode() == HttpURLConnection.HTTP_OK
-                    || con.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
+            // Analyze the response code
+            if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
-                //Analize the response from the guard
+                // Analize the response from the guard
                 while ((inputLine = in.readLine()) != null) {
                     if (inputLine.equals("success")) {
                         user.setEmail(email);
@@ -66,27 +70,43 @@ public class GuardConnection {
 
     }
 
-    //Method to request the list of all the files
+    // Method to request the list of all the files
     public Response httpRequestFile(String url, User user) {
         Response response = new Response();
-        //Create a secure connection with the guard
+        // Create a secure connection with the guard
         HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
-        //Set the jwt token required
+        // Set the jwt token required
         con.setRequestProperty("jwt", user.getJwt());
 
         try {
-            con.setRequestMethod("GET"); //Sending request
-            //Analyze response code
+            con.setRequestMethod("GET"); // Sending request
+            // Analyze response code
             if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                //if OK analyze the response
+                // if OK analyze the response
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
                 response.setStatus(0);
+                ArrayList<String> fileList = new ArrayList<>();
 
-                //Get the list of all files
+                // Get the list of all files
                 while ((inputLine = in.readLine()) != null) {
-                    response.setResponse(inputLine);
+
+                    // Parse the response as a JSON object
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    JsonNode jsonNode = objectMapper.readTree(inputLine);
+
+                    // Extract the "files" string
+                    String filesString = jsonNode.get("files").asText();
+
+                    // Parse the "files" string as a JSON array
+                    JsonNode filesNode = objectMapper.readTree(filesString);
+
+                    // Convert the filesNode to a List<String>
+                    for (JsonNode element : filesNode) {
+                        fileList.add(element.asText());
+                    }
                 }
+                response.setResponse(fileList);
                 in.close();
             } else if (con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 // if jwt token is invalid or expired, set the related status
@@ -99,30 +119,31 @@ public class GuardConnection {
         return response;
     }
 
-    //Method to open a specific file
+    // Method to open a specific file
     public Response httpRequestOpen(String url, String jwt) {
         Response res = new Response();
         ClientResponse response = new ClientResponse();
         // Create a secure connection with the Guard
         HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
-        //Set the jwt token required to open the file
+        // Set the jwt token required to open the file
         con.setRequestProperty("jwt", jwt);
 
         try {
             con.setRequestMethod("GET");
-            //Analyze the response code
+            // Analyze the response code
             if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
-                
-                // if ok get the response, parse it, and the status with the realted clientResponse object
+
+                // if ok get the response, parse it, and set the status with the realted
+                // clientResponse object
                 while ((inputLine = in.readLine()) != null) {
                     response = (new JSONToArray()).convertToClientResponse(inputLine);
                     res.setStatus(0);
                     res.setResponse(response);
                 }
                 in.close();
-            } else if(con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED){
+            } else if (con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 // if jwt token is invalid or expired, set the related status
                 res.setStatus(2);
             }
@@ -133,12 +154,12 @@ public class GuardConnection {
         return res;
     }
 
-    //Method to create a new file
+    // Method to create a new file
     public Response httpRequestCreate(String url, String jwt) {
-        //Create a secure connection with the guard
+        // Create a secure connection with the guard
         HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
         Response res = new Response();
-        //Set the required jwt
+        // Set the required jwt
         con.setRequestProperty("jwt", jwt);
 
         try {
@@ -147,15 +168,15 @@ public class GuardConnection {
             if (con.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
-                
-                //if ok; analyze the response
+
+                // if ok; analyze the response
                 while ((inputLine = in.readLine()) != null) {
                     if (inputLine.equals("success")) {
                         res.setStatus(0);
                     }
                 }
                 in.close();
-            } else if(con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED){
+            } else if (con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 // if jwt token is invalid or expired, set the related status
                 res.setStatus(2);
             }
@@ -168,14 +189,14 @@ public class GuardConnection {
 
     // MEthod to save a file
     public Response httpRequestSave(String url, String content, String jwt) {
-        //Create a secure connection with the Guard
+        // Create a secure connection with the Guard
         HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
         Response res = new Response();
         // Send the required jwt
         con.setRequestProperty("jwt", jwt);
 
         try {
-            //Send the new text in the body
+            // Send the new text in the body
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
             con.setDoOutput(true);
@@ -189,19 +210,19 @@ public class GuardConnection {
                 throw new RuntimeException(e);
             }
 
-            //Analyze the reponse code
+            // Analyze the reponse code
             if (con.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
 
-                //if ok, analyze and set the response
+                // if ok, analyze and set the response
                 while ((inputLine = in.readLine()) != null) {
                     if (inputLine.equals("success")) {
                         res.setStatus(0);
                     }
                 }
                 in.close();
-            }  else if(con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED){
+            } else if (con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 // if jwt token is invalid or expired, set the related status
                 res.setStatus(2);
             }

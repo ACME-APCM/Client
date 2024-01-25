@@ -5,12 +5,12 @@ public class Response {
     int status; // Status related to the response => 0: OK, 1: INTERNAL_ERROR, 2: UNAUTHORIZED
     Object response; // other response info which can be string or clientResponse in our case
 
-    public Response(){
-        status = 1; 
+    public Response() {
+        status = 1;
         response = null;
     }
 
-    public Response(int status, Object response){
+    public Response(int status, Object response) {
         this.status = status;
         this.response = response;
     }
@@ -30,5 +30,4 @@ public class Response {
     public Object getResponse() {
         return response;
     }
-    
 }
