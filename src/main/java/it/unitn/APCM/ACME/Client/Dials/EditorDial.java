@@ -75,6 +75,7 @@ public class EditorDial extends JDialog {
         // Bottom panel with Save and buttons
         JPanel input_panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         btn_save = new JButton("Save");
+        btn_save.setEnabled(false);
         btn_save.addActionListener(new ActionListener() {
             // Method to save the file
             public void actionPerformed(ActionEvent e) {
@@ -91,6 +92,7 @@ public class EditorDial extends JDialog {
                                 JOptionPane.INFORMATION_MESSAGE);
                     } else if (res == 2) {
                         // if jwt token is not valid or expired, require the login
+                        cleanText();
                         commonFunction.newLogin(user);
                     } else {
                         // if not, an error is occured, so set url to null and then an error message is
@@ -100,6 +102,7 @@ public class EditorDial extends JDialog {
                 }
                 if (url == null) {
                     // Show an error message if save failed
+                    cleanText();
                     commonFunction.showOptionPane(EditorDial.this, "Save Info", "Error in saving file",
                             JOptionPane.ERROR_MESSAGE);
                 }
@@ -216,9 +219,11 @@ public class EditorDial extends JDialog {
                 }
             } else if (resp.getStatus() == 2) {
                 // if jwt token is expired or is not valid, require a new login
+                cleanText();
                 commonFunction.newLogin(user);
             } else if (resp.getStatus() == 1) {
                 // Open failed, show error message
+                cleanText();
                 commonFunction.showOptionPane(EditorDial.this, "Opening", "Error in opening file",
                         JOptionPane.ERROR_MESSAGE);
             }
@@ -239,11 +244,21 @@ public class EditorDial extends JDialog {
             btn_save.setEnabled(response.get_w_mode()); // enable save button depending on the permission of the user
         } else if (status == 2) {
             // if jwt token is invalid or expired, require a new login
+            cleanText();
             commonFunction.newLogin(user);
         } else {
             // if failed, show an error message
+            cleanText();
             commonFunction.showOptionPane(EditorDial.this, "Open info", "Error in opening file",
                     JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    // Method to clean text area
+    private void cleanText(){
+        text_area.setText("");
+        selected_file.setText("No file selected");
+        path = "";
+        btn_save.setEnabled(false);
     }
 }
