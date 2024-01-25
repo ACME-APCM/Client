@@ -1,10 +1,11 @@
 package it.unitn.APCM.ACME.Client.ClientCommon;
 
+//Class that represent the response when a file is opened
 public class ClientResponse {
-    String path;
-    boolean auth;
-    boolean w_mode;
-    String text;
+    String path; //path of the file     
+    boolean auth; // read permission on the file
+    boolean w_mode; //Used to disable the save button if user has no right to write on the file
+    String text; //decrypted content of the file
 
     /*
      * SETTER

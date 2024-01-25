@@ -8,6 +8,7 @@ import java.net.URL;
 import java.security.*;
 import java.security.cert.CertificateException;
 
+//Class used to create a secure connection (mTLS v1.3) with the Guard
 public class SecureConnection {
 	private final static String guard_url = String.format("https://%s/api/v1/", System.getenv("GUARD_URL"));
 	private final static String kstore_pw = System.getenv("KEYSTORE_PASSWORD");

@@ -1,10 +1,9 @@
 package it.unitn.APCM.ACME.Client;
 
 public class User {
-
-    private String email;
-    private boolean authenticated;
-    private String jwt;
+    private String email; //Email of the user
+    private boolean authenticated; //Status of the user to know if he is authenticated or not
+    private String jwt; //JWT token assigned to the user
 
     public User() {
         this.email = "";

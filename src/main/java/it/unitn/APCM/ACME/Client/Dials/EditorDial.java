@@ -15,19 +15,22 @@ import it.unitn.APCM.ACME.Client.ClientCommon.ClientResponse;
 import it.unitn.APCM.ACME.Client.ClientCommon.DisplayMessage;
 import it.unitn.APCM.ACME.Client.ClientCommon.Response;
 
+//Main dial of the program
 public class EditorDial extends JDialog {
 
     private JButton btn_save;
     private JButton btn_new;
     private String path;
-    ArrayList<JButton> buttons = new ArrayList<JButton>();
-    JLabel selected_file = new JLabel("No text selected");
+    ArrayList<JButton> buttons = new ArrayList<JButton>(); //list of the button representing the files
+    JLabel selected_file = new JLabel("No file selected"); //Show the file opened
     GuardConnection conn = new GuardConnection();
+    JTextArea text_area;
 
     public EditorDial(Frame parent) {
         super(parent, "Editor", true);
 
         User user = new User();
+        // Require the login
         if (!user.isAuthenticated()) {
             (new ClientCall()).newLogin(user);
         }
@@ -45,7 +48,7 @@ public class EditorDial extends JDialog {
         cs.insets = new Insets(top_inset, left_inset, bottom_inset, right_inset);
 
         // Left panel with scrollable text
-        JTextArea text_area = new JTextArea(30, 60);
+        text_area = new JTextArea(30, 60);
         JScrollPane chat_scroll = new JScrollPane(text_area);
         JPanel chat_panel = new JPanel(new BorderLayout());
         chat_panel.add(selected_file, BorderLayout.PAGE_START);
@@ -71,25 +74,32 @@ public class EditorDial extends JDialog {
         cs.weighty = 1.0;
         panel.add(files_ScrollPane, cs);
 
-        // Bottom panel with Save and Open buttons
+        // Bottom panel with Save and  buttons
         JPanel input_panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         btn_save = new JButton("Save");
         btn_save.addActionListener(new ActionListener() {
+            // Method to save the file
             public void actionPerformed(ActionEvent e) {
                 String url = null;
                 if (user != null && path != null) {
                     url = "file?email=" + user.getEmail() + "&path=" + path;
+                    //Send a request to the guard
                     int res = (conn.httpRequestSave(url, text_area.getText(), user.getJwt())).getStatus();
                     
+                    //Analyze the response from the Guard
                     if (res == 0) {
+                        //if file saved successfully, show an information message
                         (new DisplayMessage()).showOptionPane(EditorDial.this,"Save info", "File saved", JOptionPane.INFORMATION_MESSAGE);
                     } else if(res == 2){
+                        //if jwt token is not valid or expired, require the login
                         (new ClientCall()).newLogin(user);
                     } else {
+                        // if not, an error is occured, so set url to null and then an error message is displayed
                         url = null;
                     }
                 }
                 if (url == null) {
+                    //Show an error message if save failed
                     (new DisplayMessage()).showOptionPane(EditorDial.this,"Save Info", "Error in saving file", JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -98,7 +108,7 @@ public class EditorDial extends JDialog {
         btn_new = new JButton("New File");
         btn_new.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
+                //handle the creation of a new file, call the associated dial
                 final JFrame new_file_frame = new JFrame("New file");
                 NewFileDial new_file_dial = new NewFileDial(new_file_frame, user);
                 new_file_dial.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -106,30 +116,23 @@ public class EditorDial extends JDialog {
                 new_file_dial.setLocationRelativeTo(null);
                 new_file_dial.setVisible(true);
 
+                //Check the dial result
                 if (new_file_dial.isSucceeded()) {
+                    //If it succeeded, create a new button for the new file
                     JButton button = new JButton(new_file_dial.getFilePath());
                     button.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
-                            path = e.getActionCommand();
-                            Response res = conn.httpRequestOpen("file?email=" + user.getEmail() + "&path=" + path, user.getJwt());
-                            int status = res.getStatus();
-                            ClientResponse response = (ClientResponse)res.getResponse();
-
-                            if (status == 0) {
-                                text_area.setText(response.get_text());
-                                selected_file.setText(path);
-                                btn_save.setEnabled(response.get_w_mode());
-                            } else if(status == 2){
-                                (new ClientCall()).newLogin(user);
-                            }else {
-                                (new DisplayMessage()).showOptionPane(EditorDial.this,"Open info", "Error in opening file", JOptionPane.ERROR_MESSAGE);
-                            }
+                            //Handle the open of the file
+                            openFile(user, e.getActionCommand());
                         }
                     });
+                    //Open the new file in the dial
+                    //Set path and text as empty
                     path = new_file_dial.getFilePath();
                     selected_file.setText(path);
                     text_area.setText("");
                     buttons.add(button);
+                    //Call the method to add the button to the dial
                     updateButtons(buttons, buttons_panel, button_constraints);
                     panel.revalidate();
                 }
@@ -153,11 +156,10 @@ public class EditorDial extends JDialog {
         setSize(1000, 600);
         setResizable(true);
         setLocationRelativeTo(parent);
-
     }
 
-    private void updateButtons(ArrayList<JButton> buttons, JPanel buttons_panel,
-            GridBagConstraints button_constraints) {
+    //Method to update the list of the button
+    private void updateButtons(ArrayList<JButton> buttons, JPanel buttons_panel, GridBagConstraints button_constraints) {
         buttons_panel.removeAll();
 
         button_constraints = new GridBagConstraints();
@@ -177,8 +179,9 @@ public class EditorDial extends JDialog {
         }
     }
 
+    //Method used to create the list of button
     private void createButtons(ArrayList<JButton> buttons, User user, JTextArea text_area) {
-
+        //Send a request to retrieve the list of files
         Response resp = conn.httpRequestFile("files?email=" + user.getEmail(), user);
         int status = resp.getStatus();
         String packed_response = null;
@@ -186,35 +189,46 @@ public class EditorDial extends JDialog {
             packed_response = resp.getResponse().toString();
         }
         if (status == 0 && packed_response != null) {
+            //if the status is OK and the response is set, parse it
             ArrayList<String> response = new ArrayList<String>(Arrays.asList(packed_response.split(",")));
 
+            //For each file, create a button
             for (String res : response) {
                 JButton button = new JButton(res);
                 button.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        path = e.getActionCommand();
-                        Response res = conn.httpRequestOpen("file?email=" + user.getEmail() + "&path=" + path, user.getJwt());
-                        int status = res.getStatus();
-                        ClientResponse response = (ClientResponse)res.getResponse();
-
-                        if (status == 0) {
-                            text_area.setText(response.get_text());
-                            selected_file.setText(path);
-                            btn_save.setEnabled(response.get_w_mode());
-                        } else if(status == 2){
-                            (new ClientCall()).newLogin(user);
-                        } else {
-                            (new DisplayMessage()).showOptionPane(EditorDial.this, "Open info", "Error in opening file", JOptionPane.ERROR_MESSAGE);
-                        }
+                        openFile(user, e.getActionCommand());
                     }
                 });
-
                 buttons.add(button);
             }
         } else if (status == 2){
+            //if jwt token is expired or is not valid, require a new login
             (new ClientCall()).newLogin(user);
         } else if(status == 1) {
-            (new DisplayMessage()).showOptionPane(EditorDial.this, "Opening", "No file", JOptionPane.ERROR_MESSAGE);
+            // Open failed, show error message
+            (new DisplayMessage()).showOptionPane(EditorDial.this, "Opening", "Error in opening file", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    //Method to open a file
+    private void openFile(User user, String path){
+        //Send a request with the path of the file to open
+        Response res = conn.httpRequestOpen("file?email=" + user.getEmail() + "&path=" + path, user.getJwt());
+        int status = res.getStatus();
+        ClientResponse response = (ClientResponse)res.getResponse();
+
+        if (status == 0) {
+            // if response is successfull, set the text
+            text_area.setText(response.get_text()); //Set path of the file to make it clear
+            selected_file.setText(path);
+            btn_save.setEnabled(response.get_w_mode()); //enable save button depending on the permission of the user
+        } else if(status == 2){
+            // if jwt token is invalid or expired, require a new login
+            (new ClientCall()).newLogin(user);
+        } else {
+            // if failed, show an error message
+            (new DisplayMessage()).showOptionPane(EditorDial.this, "Open info", "Error in opening file", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

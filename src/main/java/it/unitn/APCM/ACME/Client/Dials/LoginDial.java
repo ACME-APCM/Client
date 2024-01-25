@@ -8,7 +8,9 @@ import javax.swing.border.*;
 
 import it.unitn.APCM.ACME.Client.GuardConnection;
 import it.unitn.APCM.ACME.Client.User;
+import it.unitn.APCM.ACME.Client.ClientCommon.DisplayMessage;
 
+//Dial used for the login
 public class LoginDial extends JDialog {
 
     private JTextField tf_email;
@@ -59,24 +61,21 @@ public class LoginDial extends JDialog {
 
         panel.setBorder(new LineBorder(Color.BLACK));
 
+        //login button
         btn_login = new JButton("Login");
 
         btn_login.addActionListener(new ActionListener() {
-
+            // Method to handle login
             public void actionPerformed(ActionEvent e) {
                 GuardConnection conn = new GuardConnection();
-
+                //Send a request to the guardConnection
                 if (conn.httpRequestLogin("login", get_email(), get_password(), user)) {
-                    JOptionPane.showMessageDialog(LoginDial.this,
-                            "Authenticated successfully",
-                            "Login",
-                            JOptionPane.INFORMATION_MESSAGE);
+                    // if login successful show a message and then close the login dial
+                    (new DisplayMessage()).showOptionPane(LoginDial.this, "Login", "Authenticated successfully", JOptionPane.INFORMATION_MESSAGE);      
                     dispose();
                 } else {
-                    JOptionPane.showMessageDialog(LoginDial.this,
-                            "Invalid username or password",
-                            "Login",
-                            JOptionPane.ERROR_MESSAGE);
+                    //Show an error message if login is not successful and erase the text_area
+                    (new DisplayMessage()).showOptionPane(LoginDial.this, "Login", "Invalid username or password", JOptionPane.ERROR_MESSAGE);      
                     tf_email.setText("");
                     pf_password.setText("");
                 }

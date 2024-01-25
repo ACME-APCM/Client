@@ -24,6 +24,7 @@ public class NewFileDial extends JDialog {
     private String file_path = "";
     GuardConnection conn = new GuardConnection();
 
+    //Dial used to create a new file: it requires path and read/write permission
     public NewFileDial(Frame parent, User user) {
         super(parent, "NewFile", true);
 
@@ -83,26 +84,32 @@ public class NewFileDial extends JDialog {
 
         panel.setBorder(new LineBorder(Color.GRAY));
 
+        //Create file button
         btn_create = new JButton("Create new file");
 
         btn_create.addActionListener(new ActionListener() {
+            //Method to handle the creation of a new file
             public void actionPerformed(ActionEvent e) {
 
                 file_path = tf_file_path.getText();
-
+                //Send a request with file path and associated permission
                 String url = "newFile?email=" + user.getEmail() + "&path=" + file_path + "&r_groups="
                         + tf_r_groups.getText()
                         + "&rw_groups=" + tf_rw_groups.getText();
                 
                 int res = (conn.httpRequestCreate(url, user.getJwt())).getStatus();
-                        
+                
+                //Check the status
                 if (res == 0) {
+                    // if the file is created successfully, show the relative message and then close the dial
                     (new DisplayMessage()).showOptionPane(NewFileDial.this,"New file created","File created successfully", JOptionPane.INFORMATION_MESSAGE);
                     succeeded = true;
                     dispose();
                 } else if(res == 2){
+                    // if the jwt token is expired, request a new login to the user
                     (new ClientCall()).newLogin(user);
                 } else {
+                    // Generic error in the creation of the file, show a message and erase the text area
                     (new DisplayMessage()).showOptionPane(NewFileDial.this,"Creation report","Error in the cretion of file", JOptionPane.ERROR_MESSAGE);
                     tf_file_path.setText("");
                     tf_r_groups.setText("");

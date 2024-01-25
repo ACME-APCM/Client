@@ -14,8 +14,9 @@ import it.unitn.APCM.ACME.Client.ClientCommon.Response;
 
 public class GuardConnection {
 
+    //Method to login
     public boolean httpRequestLogin(String url, String email, String password, User user) {
-
+        //Create a secure connection with the guard to login
         HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
 
         try {
@@ -46,7 +47,7 @@ public class GuardConnection {
                     || con.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
-
+                //Analize the response from the guard
                 while ((inputLine = in.readLine()) != null) {
                     if (inputLine.equals("success")) {
                         user.setEmail(email);
@@ -65,24 +66,30 @@ public class GuardConnection {
 
     }
 
+    //Method to request the list of all the files
     public Response httpRequestFile(String url, User user) {
         Response response = new Response();
+        //Create a secure connection with the guard
         HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
-
+        //Set the jwt token required
         con.setRequestProperty("jwt", user.getJwt());
 
         try {
             con.setRequestMethod("GET"); //Sending request
+            //Analyze response code
             if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                //if OK analyze the response
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
                 response.setStatus(0);
 
+                //Get the list of all files
                 while ((inputLine = in.readLine()) != null) {
                     response.setResponse(inputLine);
                 }
                 in.close();
             } else if (con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                // if jwt token is invalid or expired, set the related status
                 response.setStatus(2);
             }
         } catch (IOException e) {
@@ -92,19 +99,23 @@ public class GuardConnection {
         return response;
     }
 
+    //Method to open a specific file
     public Response httpRequestOpen(String url, String jwt) {
         Response res = new Response();
         ClientResponse response = new ClientResponse();
+        // Create a secure connection with the Guard
         HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
-
+        //Set the jwt token required to open the file
         con.setRequestProperty("jwt", jwt);
 
         try {
             con.setRequestMethod("GET");
+            //Analyze the response code
             if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
                 
+                // if ok get the response, parse it, and the status with the realted clientResponse object
                 while ((inputLine = in.readLine()) != null) {
                     response = (new JSONToArray()).convertToClientResponse(inputLine);
                     res.setStatus(0);
@@ -112,6 +123,7 @@ public class GuardConnection {
                 }
                 in.close();
             } else if(con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED){
+                // if jwt token is invalid or expired, set the related status
                 res.setStatus(2);
             }
         } catch (IOException e) {
@@ -121,18 +133,22 @@ public class GuardConnection {
         return res;
     }
 
+    //Method to create a new file
     public Response httpRequestCreate(String url, String jwt) {
-
+        //Create a secure connection with the guard
         HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
         Response res = new Response();
+        //Set the required jwt
         con.setRequestProperty("jwt", jwt);
 
         try {
             con.setRequestMethod("GET");
+            // Analyze the response code
             if (con.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
-
+                
+                //if ok; analyze the response
                 while ((inputLine = in.readLine()) != null) {
                     if (inputLine.equals("success")) {
                         res.setStatus(0);
@@ -140,6 +156,7 @@ public class GuardConnection {
                 }
                 in.close();
             } else if(con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED){
+                // if jwt token is invalid or expired, set the related status
                 res.setStatus(2);
             }
         } catch (IOException e) {
@@ -149,13 +166,16 @@ public class GuardConnection {
         return res;
     }
 
+    // MEthod to save a file
     public Response httpRequestSave(String url, String content, String jwt) {
-
+        //Create a secure connection with the Guard
         HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
         Response res = new Response();
+        // Send the required jwt
         con.setRequestProperty("jwt", jwt);
 
         try {
+            //Send the new text in the body
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
             con.setDoOutput(true);
@@ -169,10 +189,12 @@ public class GuardConnection {
                 throw new RuntimeException(e);
             }
 
+            //Analyze the reponse code
             if (con.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
 
+                //if ok, analyze and set the response
                 while ((inputLine = in.readLine()) != null) {
                     if (inputLine.equals("success")) {
                         res.setStatus(0);
@@ -180,6 +202,7 @@ public class GuardConnection {
                 }
                 in.close();
             }  else if(con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED){
+                // if jwt token is invalid or expired, set the related status
                 res.setStatus(2);
             }
         } catch (IOException e) {
