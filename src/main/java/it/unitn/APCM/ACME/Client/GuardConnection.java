@@ -10,6 +10,7 @@ import org.springframework.boot.configurationprocessor.json.JSONObject;
 
 import it.unitn.APCM.ACME.Client.ClientCommon.ClientResponse;
 import it.unitn.APCM.ACME.Client.ClientCommon.JSONToArray;
+import it.unitn.APCM.ACME.Client.ClientCommon.Response;
 
 public class GuardConnection {
 
@@ -64,8 +65,8 @@ public class GuardConnection {
 
     }
 
-    public String httpRequestFile(String url, User user) {
-        String response = null;
+    public Response httpRequestFile(String url, User user) {
+        Response response = new Response();
         HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
 
         con.setRequestProperty("jwt", user.getJwt());
@@ -75,24 +76,24 @@ public class GuardConnection {
             if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
+                response.setStatus(0);
 
                 while ((inputLine = in.readLine()) != null) {
-                    response =  inputLine;
+                    response.setResponse(inputLine);
                 }
                 in.close();
             } else if (con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                user.setValid_session(false);
+                response.setStatus(2);
             }
         } catch (IOException e) {
-            user.setValid_session(false);
             throw new RuntimeException(e);
         }
 
         return response;
     }
 
-    public ClientResponse httpRequestOpen(String url, String jwt) {
-
+    public Response httpRequestOpen(String url, String jwt) {
+        Response res = new Response();
         ClientResponse response = new ClientResponse();
         HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
 
@@ -103,25 +104,27 @@ public class GuardConnection {
             if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
-
+                
                 while ((inputLine = in.readLine()) != null) {
                     response = (new JSONToArray()).convertToClientResponse(inputLine);
+                    res.setStatus(0);
+                    res.setResponse(response);
                 }
                 in.close();
-            } else {
-                response = null;
+            } else if(con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED){
+                res.setStatus(2);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return response;
+        return res;
     }
 
-    public boolean httpRequestCreate(String url, String jwt) {
+    public Response httpRequestCreate(String url, String jwt) {
 
         HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
-
+        Response res = new Response();
         con.setRequestProperty("jwt", jwt);
 
         try {
@@ -132,22 +135,24 @@ public class GuardConnection {
 
                 while ((inputLine = in.readLine()) != null) {
                     if (inputLine.equals("success")) {
-                        return true;
+                        res.setStatus(0);
                     }
                 }
                 in.close();
+            } else if(con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED){
+                res.setStatus(2);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return false;
+        return res;
     }
 
-    public boolean httpRequestSave(String url, String content, String jwt) {
+    public Response httpRequestSave(String url, String content, String jwt) {
 
         HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
-
+        Response res = new Response();
         con.setRequestProperty("jwt", jwt);
 
         try {
@@ -170,15 +175,17 @@ public class GuardConnection {
 
                 while ((inputLine = in.readLine()) != null) {
                     if (inputLine.equals("success")) {
-                        return true;
+                        res.setStatus(0);
                     }
                 }
                 in.close();
+            }  else if(con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED){
+                res.setStatus(2);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return false;
+        return res;
     }
 }

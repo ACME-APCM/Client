@@ -5,13 +5,11 @@ public class User {
     private String email;
     private boolean authenticated;
     private String jwt;
-    private boolean valid_session;
 
     public User() {
         this.email = "";
         this.authenticated = false;
         this.jwt = "";
-        this.valid_session = false;
     }
 
     public String getEmail() {
@@ -26,10 +24,6 @@ public class User {
         return jwt;
     }
 
-    public boolean isValid_session() {
-        return valid_session;
-    }
-
     public void setEmail(String email) {
         this.email = email;
     }
@@ -40,9 +34,5 @@ public class User {
 
     public void setJwt(String jwt) {
         this.jwt = jwt;
-    }
-
-    public void setValid_session(boolean valid_session) {
-        this.valid_session = valid_session;
     }
 }

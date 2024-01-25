@@ -8,6 +8,8 @@ import javax.swing.border.LineBorder;
 
 import it.unitn.APCM.ACME.Client.GuardConnection;
 import it.unitn.APCM.ACME.Client.User;
+import it.unitn.APCM.ACME.Client.ClientCommon.ClientCall;
+import it.unitn.APCM.ACME.Client.ClientCommon.DisplayMessage;
 
 public class NewFileDial extends JDialog {
 
@@ -91,19 +93,17 @@ public class NewFileDial extends JDialog {
                 String url = "newFile?email=" + user.getEmail() + "&path=" + file_path + "&r_groups="
                         + tf_r_groups.getText()
                         + "&rw_groups=" + tf_rw_groups.getText();
+                
+                int res = (conn.httpRequestCreate(url, user.getJwt())).getStatus();
                         
-                if (conn.httpRequestCreate(url, user.getJwt())) {
-                    JOptionPane.showMessageDialog(NewFileDial.this,
-                            "File created successfully",
-                            "New file created",
-                            JOptionPane.INFORMATION_MESSAGE);
+                if (res == 0) {
+                    (new DisplayMessage()).showOptionPane(NewFileDial.this,"New file created","File created successfully", JOptionPane.INFORMATION_MESSAGE);
                     succeeded = true;
                     dispose();
+                } else if(res == 2){
+                    (new ClientCall()).newLogin(user);
                 } else {
-                    JOptionPane.showMessageDialog(NewFileDial.this,
-                            "Error in the creation of file",
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
+                    (new DisplayMessage()).showOptionPane(NewFileDial.this,"Creation report","Error in the cretion of file", JOptionPane.ERROR_MESSAGE);
                     tf_file_path.setText("");
                     tf_r_groups.setText("");
                     tf_rw_groups.setText("");

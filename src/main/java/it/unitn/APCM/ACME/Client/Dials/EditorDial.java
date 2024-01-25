@@ -10,7 +10,10 @@ import javax.swing.border.LineBorder;
 
 import it.unitn.APCM.ACME.Client.GuardConnection;
 import it.unitn.APCM.ACME.Client.User;
+import it.unitn.APCM.ACME.Client.ClientCommon.ClientCall;
 import it.unitn.APCM.ACME.Client.ClientCommon.ClientResponse;
+import it.unitn.APCM.ACME.Client.ClientCommon.DisplayMessage;
+import it.unitn.APCM.ACME.Client.ClientCommon.Response;
 
 public class EditorDial extends JDialog {
 
@@ -26,7 +29,7 @@ public class EditorDial extends JDialog {
 
         User user = new User();
         if (!user.isAuthenticated()) {
-            newLogin(user);
+            (new ClientCall()).newLogin(user);
         }
 
         JPanel panel = new JPanel(new GridBagLayout());
@@ -76,21 +79,18 @@ public class EditorDial extends JDialog {
                 String url = null;
                 if (user != null && path != null) {
                     url = "file?email=" + user.getEmail() + "&path=" + path;
-
-                    if (conn.httpRequestSave(url, text_area.getText(), user.getJwt())) {
-                        JOptionPane.showMessageDialog(EditorDial.this,
-                                "File saved",
-                                "Save info",
-                                JOptionPane.INFORMATION_MESSAGE);
+                    int res = (conn.httpRequestSave(url, text_area.getText(), user.getJwt())).getStatus();
+                    
+                    if (res == 0) {
+                        (new DisplayMessage()).showOptionPane(EditorDial.this,"Save info", "File saved", JOptionPane.INFORMATION_MESSAGE);
+                    } else if(res == 2){
+                        (new ClientCall()).newLogin(user);
                     } else {
                         url = null;
                     }
                 }
                 if (url == null) {
-                    JOptionPane.showMessageDialog(EditorDial.this,
-                            "Error in saving file",
-                            "Save info",
-                            JOptionPane.ERROR_MESSAGE);
+                    (new DisplayMessage()).showOptionPane(EditorDial.this,"Save Info", "Error in saving file", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -111,18 +111,18 @@ public class EditorDial extends JDialog {
                     button.addActionListener(new ActionListener() {
                         public void actionPerformed(ActionEvent e) {
                             path = e.getActionCommand();
-                            ClientResponse response = conn
-                                    .httpRequestOpen("file?email=" + user.getEmail() + "&path=" + path, user.getJwt());
+                            Response res = conn.httpRequestOpen("file?email=" + user.getEmail() + "&path=" + path, user.getJwt());
+                            int status = res.getStatus();
+                            ClientResponse response = (ClientResponse)res.getResponse();
 
-                            if (response != null) {
+                            if (status == 0) {
                                 text_area.setText(response.get_text());
                                 selected_file.setText(path);
                                 btn_save.setEnabled(response.get_w_mode());
-                            } else {
-                                JOptionPane.showMessageDialog(EditorDial.this,
-                                        "Error in opening file",
-                                        "Open info",
-                                        JOptionPane.ERROR_MESSAGE);
+                            } else if(status == 2){
+                                (new ClientCall()).newLogin(user);
+                            }else {
+                                (new DisplayMessage()).showOptionPane(EditorDial.this,"Open info", "Error in opening file", JOptionPane.ERROR_MESSAGE);
                             }
                         }
                     });
@@ -179,8 +179,13 @@ public class EditorDial extends JDialog {
 
     private void createButtons(ArrayList<JButton> buttons, User user, JTextArea text_area) {
 
-        String packed_response = conn.httpRequestFile("files?email=" + user.getEmail(), user);
-        if (packed_response != null && user.isValid_session()) {
+        Response resp = conn.httpRequestFile("files?email=" + user.getEmail(), user);
+        int status = resp.getStatus();
+        String packed_response = null;
+        if(resp.getResponse() != null){
+            packed_response = resp.getResponse().toString();
+        }
+        if (status == 0 && packed_response != null) {
             ArrayList<String> response = new ArrayList<String>(Arrays.asList(packed_response.split(",")));
 
             for (String res : response) {
@@ -188,79 +193,28 @@ public class EditorDial extends JDialog {
                 button.addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         path = e.getActionCommand();
-                        ClientResponse response = conn
-                                .httpRequestOpen("file?email=" + user.getEmail() + "&path=" + path, user.getJwt());
+                        Response res = conn.httpRequestOpen("file?email=" + user.getEmail() + "&path=" + path, user.getJwt());
+                        int status = res.getStatus();
+                        ClientResponse response = (ClientResponse)res.getResponse();
 
-                        if (response != null) {
+                        if (status == 0) {
                             text_area.setText(response.get_text());
                             selected_file.setText(path);
                             btn_save.setEnabled(response.get_w_mode());
+                        } else if(status == 2){
+                            (new ClientCall()).newLogin(user);
                         } else {
-                            JOptionPane.showMessageDialog(EditorDial.this,
-                                    "Error in opening file",
-                                    "Open info",
-                                    JOptionPane.ERROR_MESSAGE);
+                            (new DisplayMessage()).showOptionPane(EditorDial.this, "Open info", "Error in opening file", JOptionPane.ERROR_MESSAGE);
                         }
                     }
                 });
 
                 buttons.add(button);
             }
+        } else if (status == 2){
+            (new ClientCall()).newLogin(user);
+        } else if(status == 1) {
+            (new DisplayMessage()).showOptionPane(EditorDial.this, "Opening", "No file", JOptionPane.ERROR_MESSAGE);
         }
-        else {
-            JOptionPane.showMessageDialog(EditorDial.this,
-                    "Session expired",
-                    "Opening",
-                    JOptionPane.ERROR_MESSAGE);
-            newLogin(user);
-        }
-    }
-
-    private void newLogin(User user) {
-        final JFrame login_frame = new JFrame("Login");
-        LoginDial login_dial = new LoginDial(login_frame, user);
-        login_dial.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        login_dial.setSize(500, 150);
-        login_dial.setLocationRelativeTo(null);
-        login_dial.setVisible(true);
     }
 }
-
-// // manage button clicks
-// public void actionPerformed(ActionEvent evt) {
-// String com = evt.getActionCommand();
-// switch (com) {
-// // open button
-// case "open":
-// // ask user to select file to read and read it
-// file = readFile("");
-// // give feedback
-// chatArea.setText(file.toString());
-// feedbackLabel.setText("File Opened");
-// break;
-// // save button
-// case "save":
-// feedbackLabel.setText(chatArea.getText());
-// file = chatArea.getText(); // Text updated
-// break;
-// default:
-// System.out.println("You pressed: " + com);
-// String email = "email";
-// String password = "password";
-
-// // craft request and send to guard server
-
-// // needed
-// /*
-// * user email
-// * user password
-// * path -> button pressed
-// */
-
-// // ArrayList<String> response = http_request(
-// // guard_url + "file?email=" + email + "&pwd=" + password + "&path=" + com);
-
-// // get response and open file if allowed
-// break;
-// }
-// }
