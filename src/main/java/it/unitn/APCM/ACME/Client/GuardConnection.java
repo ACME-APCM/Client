@@ -278,4 +278,45 @@ public class GuardConnection {
 
         return res;
     }
+
+    /**
+     * Http request create used to delete a file.
+     *
+     * @param url the url
+     * @param jwt the jwt
+     * @return the response
+     */
+    public Response httpRequestDelete(String url, String jwt) {
+        Response res = new Response();
+
+        // Create a secure connection with the guard
+        HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
+        // Set the required jwt
+        con.setRequestProperty("jwt", jwt);
+
+        try {
+            con.setRequestMethod("GET");
+            // Analyze the response code
+            if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                String inputLine;
+
+                // if OK analyze the response
+                while ((inputLine = in.readLine()) != null) {
+                    if (inputLine.equals("success")) {
+                        res.setStatus(0);
+                    }
+                }
+                in.close();
+            } else if (con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                // if jwt token is invalid or expired, set the related status
+                res.setStatus(2);
+            }
+        } catch (IOException e) {
+            // return empty response which is by default error
+            return new Response();
+        }
+
+        return res;
+    }
 }

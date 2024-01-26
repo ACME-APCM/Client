@@ -18,6 +18,7 @@ import it.unitn.APCM.ACME.Client.ClientCommon.Response;
 public class EditorDial extends JDialog {
 
     private JButton btn_save;
+    private JButton btn_delete;
     private JButton btn_new;
     private String path;
     private JTextArea text_area;
@@ -82,7 +83,7 @@ public class EditorDial extends JDialog {
         cs.weighty = 1.0;
         panel.add(files_ScrollPane, cs);
 
-        // Bottom panel with Save and new File buttons
+        // Bottom panel with Save, new File adn delete buttons
         JPanel input_panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         btn_save = new JButton("Save");
         btn_save.setEnabled(false);
@@ -119,6 +120,54 @@ public class EditorDial extends JDialog {
             }
         });
 
+        btn_delete = new JButton("Delete");
+        btn_delete.setEnabled(false);
+        btn_delete.addActionListener(new ActionListener() {
+            // Method to delete the file
+            public void actionPerformed(ActionEvent e) {
+                String url = null;
+                if (user != null && path != null) {
+                    url = "delete?email=" + user.getEmail() + "&path=" + path;
+                    // Send a request to the guard
+                    int res = (conn.httpRequestDelete(url, user.getJwt())).getStatus();
+
+                    // Analyze the response from the Guard
+                    if (res == 0) {
+                        // if file saved successfully, show an information message
+                        commonFunction.showOptionPane(EditorDial.this, "Delete info", "File deleted",
+                                JOptionPane.INFORMATION_MESSAGE);
+
+                        for (JButton button : buttons) {
+                            if (button.getText().equals(path)) {
+                                buttons.remove(button);
+                                break;
+                            }
+                        }
+
+                        cleanText();
+
+                        // Call the method to update the buttons
+                        updateButtons(buttons, buttons_panel, button_constraints);
+                        panel.revalidate();
+                    } else if (res == 2) {
+                        // if jwt token is not valid or expired, require the login
+                        cleanText();
+                        commonFunction.newLogin(user);
+                    } else {
+                        // if not, an error is occured, so set url to null and then an error message is
+                        // displayed
+                        url = null;
+                    }
+                }
+                if (url == null) {
+                    // Show an error message if save failed
+                    cleanText();
+                    commonFunction.showOptionPane(EditorDial.this, "Delete Info", "Error in deleting file",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
         btn_new = new JButton("New File");
         btn_new.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -145,6 +194,8 @@ public class EditorDial extends JDialog {
                     path = new_file_dial.getFilePath();
                     selected_file.setText(path);
                     text_area.setText("");
+                    btn_save.setEnabled(true);
+                    btn_delete.setEnabled(true);
                     buttons.add(button);
                     // Call the method to add the button to the dial
                     updateButtons(buttons, buttons_panel, button_constraints);
@@ -156,6 +207,7 @@ public class EditorDial extends JDialog {
         // Add buttons to the panel and set flavours
         input_panel.add(btn_new);
         input_panel.add(btn_save);
+        input_panel.add(btn_delete);
 
         cs.gridx = 0;
         cs.gridy = 1;
@@ -176,9 +228,10 @@ public class EditorDial extends JDialog {
     // Method to update the list of the button
     private void updateButtons(ArrayList<JButton> buttons, JPanel buttons_panel,
             GridBagConstraints button_constraints) {
-                
+
         // remove all the buttons from the right space
         buttons_panel.removeAll();
+        buttons_panel.updateUI();
 
         button_constraints = new GridBagConstraints();
         button_constraints.fill = GridBagConstraints.HORIZONTAL;
@@ -245,17 +298,19 @@ public class EditorDial extends JDialog {
     }
 
     // Method to open a file
-    private void openFile(User user, String path) {
+    private void openFile(User user, String requested_path) {
         // Send a request with the path of the file to open
-        Response res = conn.httpRequestOpen("file?email=" + user.getEmail() + "&path=" + path, user.getJwt());
+        Response res = conn.httpRequestOpen("file?email=" + user.getEmail() + "&path=" + requested_path, user.getJwt());
         int status = res.getStatus();
         ClientResponse response = (ClientResponse) res.getResponse();
 
         if (status == 0) {
+            path = requested_path;
             // if response is successfull, set the text
             text_area.setText(response.get_text()); // Set path of the file to make it clear
-            selected_file.setText(path);
+            selected_file.setText(requested_path);
             btn_save.setEnabled(response.get_w_mode()); // enable save button depending on the permission of the user
+            btn_delete.setEnabled(response.get_w_mode()); // enable delete button depending on the permission of the user
         } else if (status == 2) {
             // if jwt token is invalid or expired, require a new login
             cleanText();
@@ -274,5 +329,6 @@ public class EditorDial extends JDialog {
         selected_file.setText("No file selected");
         path = "";
         btn_save.setEnabled(false);
+        btn_delete.setEnabled(false);
     }
 }
