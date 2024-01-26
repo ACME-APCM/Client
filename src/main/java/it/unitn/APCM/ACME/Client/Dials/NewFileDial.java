@@ -26,18 +26,18 @@ public class NewFileDial extends JDialog {
     private GuardConnection conn = new GuardConnection();
     private CommonDialFunction commonFunction = new CommonDialFunction();
 
-
     /**
-     * Instantiates a new New file dial.
+     * Instantiates a new New file dial used to create a new file: it requires path
+     * and read/write permission.
      *
      * @param parent the parent
      * @param user   the user
      */
-//Dial used to create a new file: it requires path and read/write permission
     public NewFileDial(Frame parent, User user) {
         super(parent, "NewFile", true);
 
         succeeded = false;
+        // Creates the panel and sets the email and password fields
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints cs = new GridBagConstraints();
 
@@ -93,33 +93,38 @@ public class NewFileDial extends JDialog {
 
         panel.setBorder(new LineBorder(Color.GRAY));
 
-        //Create file button
+        // Create file button
         btn_create = new JButton("Create new file");
 
         btn_create.addActionListener(new ActionListener() {
-            //Method to handle the creation of a new file
+            // Method to handle the creation of a new file
             public void actionPerformed(ActionEvent e) {
 
                 file_path = tf_file_path.getText();
-                //Send a request with file path and associated permission
+                // Send a request with file path and associated permission
                 String url = "newFile?email=" + user.getEmail() + "&path=" + file_path + "&r_groups="
                         + tf_r_groups.getText()
                         + "&rw_groups=" + tf_rw_groups.getText();
-                
+
+                // Get the status of the request
                 int res = (conn.httpRequestCreate(url, user.getJwt())).getStatus();
-                
-                //Check the status
+
+                // Check the status
                 if (res == 0) {
-                    // if the file is created successfully, show the relative message and then close the dial
-                    commonFunction.showOptionPane(NewFileDial.this,"New file created","File created successfully", JOptionPane.INFORMATION_MESSAGE);
+                    // if the file is created successfully, show the relative message and then close
+                    // the dial
+                    commonFunction.showOptionPane(NewFileDial.this, "New file created", "File created successfully",
+                            JOptionPane.INFORMATION_MESSAGE);
                     succeeded = true;
                     dispose();
-                } else if(res == 2){
+                } else if (res == 2) {
                     // if the jwt token is expired, request a new login to the user
                     commonFunction.newLogin(user);
                 } else {
-                    // Generic error in the creation of the file, show a message and erase the text area
-                    commonFunction.showOptionPane(NewFileDial.this,"Creation report","Error in the creation of file", JOptionPane.ERROR_MESSAGE);
+                    // Generic error in the creation of the file, show a message and erase the text
+                    // area
+                    commonFunction.showOptionPane(NewFileDial.this, "Creation report", "Error in the creation of file",
+                            JOptionPane.ERROR_MESSAGE);
                     tf_file_path.setText("");
                     tf_r_groups.setText("");
                     tf_rw_groups.setText("");
@@ -127,6 +132,7 @@ public class NewFileDial extends JDialog {
             }
         });
 
+        // Add the create button to the panel and sets flavours
         JPanel bp = new JPanel();
         bp.add(btn_create);
 
@@ -139,20 +145,16 @@ public class NewFileDial extends JDialog {
     }
 
     /**
-     * Is succeeded boolean.
+     * Is succeeded to check if the creation was successful.
      *
      * @return the boolean
      */
-    public boolean isSucceeded() {
-        return succeeded;
-    }
+    public boolean isSucceeded() { return succeeded; }
 
     /**
      * Gets file path.
      *
      * @return the file path
      */
-    public String getFilePath() {
-        return file_path;
-    }
+    public String getFilePath() { return file_path; }
 }

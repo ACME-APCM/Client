@@ -1,30 +1,25 @@
 package it.unitn.APCM.ACME.Client.ClientCommon;
 
 /**
- * The type Client response.
+ * The type Client response that represent the response when a file is opened.
  */
-//Class that represent the response when a file is opened
 public class ClientResponse {
     /**
-     * The Path.
+     * The Path of the file.
      */
-    String path; //path of the file
+    String path; 
     /**
-     * The Auth.
+     * The Auth (read permission on the file).
      */
-    boolean auth; // read permission on the file
+    boolean auth; 
     /**
-     * The W mode.
+     * The W mode (Used to disable the save button if user has no right to write on the file).
      */
-    boolean w_mode; //Used to disable the save button if user has no right to write on the file
+    boolean w_mode; 
     /**
-     * The Text.
+     * The Text of the file.
      */
-    String text; //decrypted content of the file
-
-    /*
-     * SETTER
-     */
+    String text;
 
     /**
      * Sets path.
@@ -53,10 +48,6 @@ public class ClientResponse {
      * @param w_mode the w mode
      */
     public void set_w_mode(boolean w_mode) {this.w_mode = w_mode;}
-
-    /*
-     * GETTER
-     */
 
     /**
      * Gets path.

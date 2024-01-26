@@ -15,9 +15,7 @@ public class Client {
      * @param args the args
      */
     public static void main(String args[]) {
-        /*
-         * NORMAL DIALOG
-         */
+        // Create the editor dial that will be used for all the operations
         final JFrame Editor_frame = new JFrame("Editor");
         EditorDial editor_dial = new EditorDial(Editor_frame);
         editor_dial.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

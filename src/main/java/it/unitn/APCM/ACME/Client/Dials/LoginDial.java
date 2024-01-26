@@ -4,15 +4,13 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
-import javax.swing.border.*;
 
 import it.unitn.APCM.ACME.Client.GuardConnection;
 import it.unitn.APCM.ACME.Client.User;
 
 /**
- * The type Login dial.
+ * The type Login dial used for login.
  */
-//Dial used for the login
 public class LoginDial extends JDialog {
 
     private JTextField tf_email;
@@ -21,7 +19,6 @@ public class LoginDial extends JDialog {
     private JLabel lbl_password;
     private JButton btn_login;
     private CommonDialFunction commonFunction = new CommonDialFunction();
-
 
     /**
      * Instantiates a new Login dial.
@@ -32,6 +29,7 @@ public class LoginDial extends JDialog {
     public LoginDial(Frame parent, User user) {
         super(parent, "Login", true);
 
+        // Creates the panel and sets the email and password fields
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints cs = new GridBagConstraints();
 
@@ -69,29 +67,33 @@ public class LoginDial extends JDialog {
         cs.ipady = 10;
         panel.add(pf_password, cs);
 
-        panel.setBorder(new LineBorder(Color.BLACK));
-
-        //login button
+        // login button
         btn_login = new JButton("Login");
 
         btn_login.addActionListener(new ActionListener() {
             // Method to handle login
             public void actionPerformed(ActionEvent e) {
                 GuardConnection conn = new GuardConnection();
-                //Send a request to the guardConnection
-                if (conn.httpRequestLogin("login", get_email(), get_password(), user)) {
+                // Get the email and password from the fields
+                String email = tf_email.getText().trim();
+                String password = new String(pf_password.getPassword());
+                // Send a request to the guardConnection
+                if (conn.httpRequestLogin("login", email, password, user)) {
                     // if login successful show a message and then close the login dial
-                    commonFunction.showOptionPane(LoginDial.this, "Login", "Authenticated successfully", JOptionPane.INFORMATION_MESSAGE);      
+                    commonFunction.showOptionPane(LoginDial.this, "Login", "Authenticated successfully",
+                            JOptionPane.INFORMATION_MESSAGE);
                     dispose();
                 } else {
-                    //Show an error message if login is not successful and erase the text_area
-                    commonFunction.showOptionPane(LoginDial.this, "Login", "Invalid username or password", JOptionPane.ERROR_MESSAGE);      
+                    // Show an error message if login is not successful and erase the text_area
+                    commonFunction.showOptionPane(LoginDial.this, "Login", "Invalid username or password",
+                            JOptionPane.ERROR_MESSAGE);
                     tf_email.setText("");
                     pf_password.setText("");
                 }
             }
         });
 
+        // Add the login button to the panel and sets flavours
         JPanel bp = new JPanel();
         bp.add(btn_login);
 
@@ -101,23 +103,5 @@ public class LoginDial extends JDialog {
         pack();
         setResizable(false);
         setLocationRelativeTo(parent);
-    }
-
-    /**
-     * Gets email.
-     *
-     * @return the email
-     */
-    public String get_email() {
-        return tf_email.getText().trim();
-    }
-
-    /**
-     * Gets password.
-     *
-     * @return the password
-     */
-    public String get_password() {
-        return new String(pf_password.getPassword());
     }
 }

@@ -9,11 +9,13 @@ import java.security.*;
 import java.security.cert.CertificateException;
 
 /**
- * The type Secure connection.
+ * The type Secure connection used to create a secure connection (mTLS v1.3)
+ * with the Guard.
  */
-//Class used to create a secure connection (mTLS v1.3) with the Guard
 public class SecureConnection {
+	// url of the guard server
 	private final static String guard_url = String.format("https://%s/api/v1/", System.getenv("GUARD_URL"));
+	// environment varaibles for certificates
 	private final static String kstore_pw = System.getenv("KEYSTORE_PASSWORD");
 	private final static String k_pw = System.getenv("KEY_PASSWORD");
 	private static SSLContext sc = null;
@@ -26,7 +28,6 @@ public class SecureConnection {
 	 * @param url the url
 	 */
 	public SecureConnection(String url) {
-		//System.setProperty("javax.net.debug", "all");
 		String request_url = guard_url + url;
 
 		if (sc == null) {
@@ -37,7 +38,8 @@ public class SecureConnection {
 
 				// KeyManagerFactory
 				KeyStore ks = KeyStore.getInstance("JKS");
-				InputStream kstoreStream = ClassLoader.getSystemClassLoader().getResourceAsStream("Client_keystore.jks");
+				InputStream kstoreStream = ClassLoader.getSystemClassLoader()
+						.getResourceAsStream("Client_keystore.jks");
 				ks.load(kstoreStream, kstore_pw.toCharArray());
 				KeyManagerFactory kmf = KeyManagerFactory.getInstance("PKIX");
 				kmf.init(ks, k_pw.toCharArray());
@@ -48,11 +50,13 @@ public class SecureConnection {
 						break;
 					}
 				}
-				if (x509km == null) throw new NullPointerException();
+				if (x509km == null)
+					throw new NullPointerException();
 
 				// TrustManagerFactory
 				KeyStore ts = KeyStore.getInstance("JKS");
-				InputStream tstoreStream = ClassLoader.getSystemClassLoader().getResourceAsStream("Client_truststore.jks");
+				InputStream tstoreStream = ClassLoader.getSystemClassLoader()
+						.getResourceAsStream("Client_truststore.jks");
 				ts.load(tstoreStream, null);
 				TrustManagerFactory tmf = TrustManagerFactory.getInstance("PKIX");
 				tmf.init(ts);
@@ -63,18 +67,19 @@ public class SecureConnection {
 						break;
 					}
 				}
-				if (x509tm == null) throw new NullPointerException();
+				if (x509tm == null)
+					throw new NullPointerException();
 
 				// Instantiate SecureContext
 				sc = SSLContext.getInstance("TLSv1.3");
-				sc.init(new KeyManager[]{x509km}, new TrustManager[]{x509tm}, new java.security.SecureRandom());
-			} catch (IOException | UnrecoverableKeyException | CertificateException | NoSuchAlgorithmException |
-					 KeyStoreException | KeyManagementException e) {
+				sc.init(new KeyManager[] { x509km }, new TrustManager[] { x509tm }, new java.security.SecureRandom());
+			} catch (IOException | UnrecoverableKeyException | CertificateException | NoSuchAlgorithmException
+					| KeyStoreException | KeyManagementException e) {
 				throw new RuntimeException(e);
 			}
 		}
 
-		try	{
+		try {
 			URL httpsURL = new URL(request_url);
 			HttpURLConnection con = (HttpURLConnection) httpsURL.openConnection();
 			if (con instanceof HttpsURLConnection) {
@@ -92,7 +97,5 @@ public class SecureConnection {
 	 *
 	 * @return the secure con
 	 */
-	protected HttpsURLConnection getSecure_con() {
-		return secure_con;
-	}
+	protected HttpsURLConnection getSecure_con() { return secure_con; }
 }

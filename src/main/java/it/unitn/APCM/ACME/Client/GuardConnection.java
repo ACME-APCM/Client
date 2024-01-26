@@ -22,7 +22,7 @@ import it.unitn.APCM.ACME.Client.ClientCommon.Response;
 public class GuardConnection {
 
     /**
-     * Http request login boolean.
+     * Http request login boolean used to requst a login to the guard.
      *
      * @param url      the url
      * @param email    the email
@@ -30,27 +30,27 @@ public class GuardConnection {
      * @param user     the user
      * @return the boolean
      */
-// Method to login
     public boolean httpRequestLogin(String url, String email, String password, User user) {
         // Create a secure connection with the guard to login
         HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
 
         try {
+            // Set the request method and the content type
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json; charset=utf-8");
             con.setDoOutput(true);
 
             // Create a JSON object for credentials
-            JSONObject credentialsJson = new JSONObject();
+            JSONObject credentials = new JSONObject();
             try {
-                credentialsJson.put("email", email);
-                credentialsJson.put("password", password);
+                credentials.put("email", email);
+                credentials.put("password", password);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
             // Convert the JSON object to a string
-            String jsonInputString = credentialsJson.toString();
+            String jsonInputString = credentials.toString();
 
             // Write the JSON string to the output stream
             try (OutputStream os = con.getOutputStream()) {
@@ -61,6 +61,7 @@ public class GuardConnection {
 
             // Analyze the response code
             if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                // if OK analyze the response
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
                 // Analize the response from the guard
@@ -79,17 +80,15 @@ public class GuardConnection {
         }
 
         return false;
-
     }
 
     /**
-     * Http request file response.
+     * Http request file used to request the list of all the files.
      *
      * @param url  the url
      * @param user the user
      * @return the response
      */
-// Method to request the list of all the files
     public Response httpRequestFile(String url, User user) {
         Response response = new Response();
         // Create a secure connection with the guard
@@ -125,6 +124,7 @@ public class GuardConnection {
                         fileList.add(element.asText());
                     }
                 }
+                // Set the response
                 response.setResponse(fileList);
                 in.close();
             } else if (con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
@@ -140,13 +140,12 @@ public class GuardConnection {
     }
 
     /**
-     * Http request open response.
+     * Http request open used to open a specific file.
      *
      * @param url the url
      * @param jwt the jwt
      * @return the response
      */
-// Method to open a specific file
     public Response httpRequestOpen(String url, String jwt) {
         Response res = new Response();
         ClientResponse response = new ClientResponse();
@@ -162,7 +161,7 @@ public class GuardConnection {
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
 
-                // if ok get the response, parse it, and set the status with the realted
+                // if OK get the response, parse it, and set the status with the realted
                 // clientResponse object
                 while ((inputLine = in.readLine()) != null) {
                     response = (new JSONToArray()).convertToClientResponse(inputLine);
@@ -183,17 +182,17 @@ public class GuardConnection {
     }
 
     /**
-     * Http request create response.
+     * Http request create used to create a new file.
      *
      * @param url the url
      * @param jwt the jwt
      * @return the response
      */
-// Method to create a new file
     public Response httpRequestCreate(String url, String jwt) {
+        Response res = new Response();
+
         // Create a secure connection with the guard
         HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
-        Response res = new Response();
         // Set the required jwt
         con.setRequestProperty("jwt", jwt);
 
@@ -204,7 +203,7 @@ public class GuardConnection {
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
 
-                // if ok; analyze the response
+                // if CREATED analyze the response
                 while ((inputLine = in.readLine()) != null) {
                     if (inputLine.equals("success")) {
                         res.setStatus(0);
@@ -224,18 +223,18 @@ public class GuardConnection {
     }
 
     /**
-     * Http request save response.
+     * Http request save used to save a file.
      *
      * @param url     the url
      * @param content the content
      * @param jwt     the jwt
      * @return the response
      */
-// MEthod to save a file
     public Response httpRequestSave(String url, String content, String jwt) {
+        Response res = new Response();
+
         // Create a secure connection with the Guard
         HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
-        Response res = new Response();
         // Send the required jwt
         con.setRequestProperty("jwt", jwt);
 
@@ -244,6 +243,7 @@ public class GuardConnection {
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
             con.setDoOutput(true);
+            // Write the new text in the output stream
             try (OutputStream os = con.getOutputStream()) {
                 if (content == null) {
                     throw new NullPointerException();
@@ -260,7 +260,7 @@ public class GuardConnection {
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
 
-                // if ok, analyze and set the response
+                // if CREATED analyze and set the response
                 while ((inputLine = in.readLine()) != null) {
                     if (inputLine.equals("success")) {
                         res.setStatus(0);

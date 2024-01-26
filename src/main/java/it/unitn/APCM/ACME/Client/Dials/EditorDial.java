@@ -15,17 +15,17 @@ import it.unitn.APCM.ACME.Client.ClientCommon.Response;
 /**
  * The type Editor dial.
  */
-//Main dial of the program
 public class EditorDial extends JDialog {
 
     private JButton btn_save;
     private JButton btn_new;
     private String path;
-    private ArrayList<JButton> buttons = new ArrayList<JButton>(); // list of the button representing the files
-    private JLabel selected_file = new JLabel("No file selected"); // Show the file opened
-    private GuardConnection conn = new GuardConnection();
-    private CommonDialFunction commonFunction = new CommonDialFunction();
     private JTextArea text_area;
+    private JLabel selected_file = new JLabel("No file selected"); // Show the file opened
+    private ArrayList<JButton> buttons = new ArrayList<JButton>(); // list of the button representing the files
+
+    private GuardConnection conn = new GuardConnection(); // Connection with the Guard
+    private CommonDialFunction commonFunction = new CommonDialFunction(); // Common function used in the dials
 
     /**
      * Instantiates a new Editor dial.
@@ -41,6 +41,7 @@ public class EditorDial extends JDialog {
             commonFunction.newLogin(user);
         }
 
+        // Creates the panel
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints cs = new GridBagConstraints();
         cs.fill = GridBagConstraints.BOTH;
@@ -67,6 +68,7 @@ public class EditorDial extends JDialog {
         cs.weighty = 1.0;
         panel.add(chat_panel, cs);
 
+        // Right panel with list of files as buttons
         JPanel buttons_panel = new JPanel(new GridBagLayout());
         GridBagConstraints button_constraints = new GridBagConstraints();
         createButtons(buttons, user, text_area);
@@ -80,7 +82,7 @@ public class EditorDial extends JDialog {
         cs.weighty = 1.0;
         panel.add(files_ScrollPane, cs);
 
-        // Bottom panel with Save and buttons
+        // Bottom panel with Save and new File buttons
         JPanel input_panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         btn_save = new JButton("Save");
         btn_save.setEnabled(false);
@@ -151,6 +153,7 @@ public class EditorDial extends JDialog {
             }
         });
 
+        // Add buttons to the panel and set flavours
         input_panel.add(btn_new);
         input_panel.add(btn_save);
 
@@ -173,6 +176,8 @@ public class EditorDial extends JDialog {
     // Method to update the list of the button
     private void updateButtons(ArrayList<JButton> buttons, JPanel buttons_panel,
             GridBagConstraints button_constraints) {
+                
+        // remove all the buttons from the right space
         buttons_panel.removeAll();
 
         button_constraints = new GridBagConstraints();
@@ -180,6 +185,7 @@ public class EditorDial extends JDialog {
         button_constraints.weightx = 1.0;
         button_constraints.insets = new Insets(5, 10, 5, 10); // Adjust spacing between buttons
 
+        // Add all the buttons to the right space
         for (int i = 0; i < buttons.size(); i++) {
             button_constraints.gridx = 0;
             button_constraints.gridy = i;
@@ -215,7 +221,7 @@ public class EditorDial extends JDialog {
                     }
                 }
 
-                // For each file, create a button
+                // For each file, create a button and add it to the list
                 for (String res : response) {
                     JButton button = new JButton(res);
                     button.addActionListener(new ActionListener() {
@@ -263,7 +269,7 @@ public class EditorDial extends JDialog {
     }
 
     // Method to clean text area
-    private void cleanText(){
+    private void cleanText() {
         text_area.setText("");
         selected_file.setText("No file selected");
         path = "";
