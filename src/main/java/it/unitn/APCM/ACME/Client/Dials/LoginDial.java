@@ -6,7 +6,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import it.unitn.APCM.ACME.Client.GuardConnection;
-import it.unitn.APCM.ACME.Client.User;
+import it.unitn.APCM.ACME.Client.ClientCommon.User;
 
 /**
  * The type Login dial used for login.

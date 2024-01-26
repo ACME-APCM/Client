@@ -15,6 +15,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.unitn.APCM.ACME.Client.ClientCommon.ClientResponse;
 import it.unitn.APCM.ACME.Client.ClientCommon.JSONToArray;
 import it.unitn.APCM.ACME.Client.ClientCommon.Response;
+import it.unitn.APCM.ACME.Client.ClientCommon.SecureConnection;
+import it.unitn.APCM.ACME.Client.ClientCommon.User;
 
 /**
  * The type Guard connection.
@@ -295,7 +297,7 @@ public class GuardConnection {
         con.setRequestProperty("jwt", jwt);
 
         try {
-            con.setRequestMethod("GET");
+            con.setRequestMethod("DELETE");
             // Analyze the response code
             if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));

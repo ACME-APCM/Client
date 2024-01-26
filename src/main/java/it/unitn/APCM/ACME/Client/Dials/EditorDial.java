@@ -8,7 +8,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 import it.unitn.APCM.ACME.Client.GuardConnection;
-import it.unitn.APCM.ACME.Client.User;
+import it.unitn.APCM.ACME.Client.ClientCommon.User;
 import it.unitn.APCM.ACME.Client.ClientCommon.ClientResponse;
 import it.unitn.APCM.ACME.Client.ClientCommon.Response;
 

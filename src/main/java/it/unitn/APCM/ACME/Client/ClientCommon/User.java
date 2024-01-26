@@ -1,4 +1,4 @@
-package it.unitn.APCM.ACME.Client;
+package it.unitn.APCM.ACME.Client.ClientCommon;
 
 /**
  * The type User.

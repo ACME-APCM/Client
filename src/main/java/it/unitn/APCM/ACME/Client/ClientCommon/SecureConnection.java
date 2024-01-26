@@ -1,4 +1,4 @@
-package it.unitn.APCM.ACME.Client;
+package it.unitn.APCM.ACME.Client.ClientCommon;
 
 import javax.net.ssl.*;
 import java.io.IOException;
@@ -97,5 +97,5 @@ public class SecureConnection {
 	 *
 	 * @return the secure con
 	 */
-	protected HttpsURLConnection getSecure_con() { return secure_con; }
+	public HttpsURLConnection getSecure_con() { return secure_con; }
 }
