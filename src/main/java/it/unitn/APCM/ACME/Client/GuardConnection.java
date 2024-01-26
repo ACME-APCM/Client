@@ -16,9 +16,21 @@ import it.unitn.APCM.ACME.Client.ClientCommon.ClientResponse;
 import it.unitn.APCM.ACME.Client.ClientCommon.JSONToArray;
 import it.unitn.APCM.ACME.Client.ClientCommon.Response;
 
+/**
+ * The type Guard connection.
+ */
 public class GuardConnection {
 
-    // Method to login
+    /**
+     * Http request login boolean.
+     *
+     * @param url      the url
+     * @param email    the email
+     * @param password the password
+     * @param user     the user
+     * @return the boolean
+     */
+// Method to login
     public boolean httpRequestLogin(String url, String email, String password, User user) {
         // Create a secure connection with the guard to login
         HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
@@ -70,7 +82,14 @@ public class GuardConnection {
 
     }
 
-    // Method to request the list of all the files
+    /**
+     * Http request file response.
+     *
+     * @param url  the url
+     * @param user the user
+     * @return the response
+     */
+// Method to request the list of all the files
     public Response httpRequestFile(String url, User user) {
         Response response = new Response();
         // Create a secure connection with the guard
@@ -120,7 +139,14 @@ public class GuardConnection {
         return response;
     }
 
-    // Method to open a specific file
+    /**
+     * Http request open response.
+     *
+     * @param url the url
+     * @param jwt the jwt
+     * @return the response
+     */
+// Method to open a specific file
     public Response httpRequestOpen(String url, String jwt) {
         Response res = new Response();
         ClientResponse response = new ClientResponse();
@@ -156,7 +182,14 @@ public class GuardConnection {
         return res;
     }
 
-    // Method to create a new file
+    /**
+     * Http request create response.
+     *
+     * @param url the url
+     * @param jwt the jwt
+     * @return the response
+     */
+// Method to create a new file
     public Response httpRequestCreate(String url, String jwt) {
         // Create a secure connection with the guard
         HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();
@@ -190,7 +223,15 @@ public class GuardConnection {
         return res;
     }
 
-    // MEthod to save a file
+    /**
+     * Http request save response.
+     *
+     * @param url     the url
+     * @param content the content
+     * @param jwt     the jwt
+     * @return the response
+     */
+// MEthod to save a file
     public Response httpRequestSave(String url, String content, String jwt) {
         // Create a secure connection with the Guard
         HttpsURLConnection con = (new SecureConnection(url)).getSecure_con();

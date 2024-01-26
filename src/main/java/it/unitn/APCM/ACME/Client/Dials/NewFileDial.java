@@ -9,6 +9,9 @@ import javax.swing.border.LineBorder;
 import it.unitn.APCM.ACME.Client.GuardConnection;
 import it.unitn.APCM.ACME.Client.User;
 
+/**
+ * The type New file dial.
+ */
 public class NewFileDial extends JDialog {
 
     private JLabel lbl_file_path;
@@ -24,7 +27,13 @@ public class NewFileDial extends JDialog {
     private CommonDialFunction commonFunction = new CommonDialFunction();
 
 
-    //Dial used to create a new file: it requires path and read/write permission
+    /**
+     * Instantiates a new New file dial.
+     *
+     * @param parent the parent
+     * @param user   the user
+     */
+//Dial used to create a new file: it requires path and read/write permission
     public NewFileDial(Frame parent, User user) {
         super(parent, "NewFile", true);
 
@@ -129,10 +138,20 @@ public class NewFileDial extends JDialog {
         setLocationRelativeTo(parent);
     }
 
+    /**
+     * Is succeeded boolean.
+     *
+     * @return the boolean
+     */
     public boolean isSucceeded() {
         return succeeded;
     }
 
+    /**
+     * Gets file path.
+     *
+     * @return the file path
+     */
     public String getFilePath() {
         return file_path;
     }

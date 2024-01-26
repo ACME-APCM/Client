@@ -8,6 +8,9 @@ import java.net.URL;
 import java.security.*;
 import java.security.cert.CertificateException;
 
+/**
+ * The type Secure connection.
+ */
 //Class used to create a secure connection (mTLS v1.3) with the Guard
 public class SecureConnection {
 	private final static String guard_url = String.format("https://%s/api/v1/", System.getenv("GUARD_URL"));
@@ -17,6 +20,11 @@ public class SecureConnection {
 	// Connection create at each new SecureConnection()
 	private HttpsURLConnection secure_con;
 
+	/**
+	 * Instantiates a new Secure connection.
+	 *
+	 * @param url the url
+	 */
 	public SecureConnection(String url) {
 		//System.setProperty("javax.net.debug", "all");
 		String request_url = guard_url + url;
@@ -79,6 +87,11 @@ public class SecureConnection {
 		}
 	}
 
+	/**
+	 * Gets secure con.
+	 *
+	 * @return the secure con
+	 */
 	protected HttpsURLConnection getSecure_con() {
 		return secure_con;
 	}

@@ -12,6 +12,9 @@ import it.unitn.APCM.ACME.Client.User;
 import it.unitn.APCM.ACME.Client.ClientCommon.ClientResponse;
 import it.unitn.APCM.ACME.Client.ClientCommon.Response;
 
+/**
+ * The type Editor dial.
+ */
 //Main dial of the program
 public class EditorDial extends JDialog {
 
@@ -24,6 +27,11 @@ public class EditorDial extends JDialog {
     private CommonDialFunction commonFunction = new CommonDialFunction();
     private JTextArea text_area;
 
+    /**
+     * Instantiates a new Editor dial.
+     *
+     * @param parent the parent
+     */
     public EditorDial(Frame parent) {
         super(parent, "Editor", true);
 

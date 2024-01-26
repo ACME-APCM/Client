@@ -8,8 +8,16 @@ import javax.swing.JOptionPane;
 
 import it.unitn.APCM.ACME.Client.User;
 
+/**
+ * The type Common dial function.
+ */
 public class CommonDialFunction {
-     //Method used in different dials to call a new login form to login or if token is expired
+    /**
+     * New login.
+     *
+     * @param user the user
+     */
+//Method used in different dials to call a new login form to login or if token is expired
     protected void newLogin(User user) {
         final JFrame login_frame = new JFrame("Login");
         LoginDial login_dial = new LoginDial(login_frame, user);
@@ -19,7 +27,15 @@ public class CommonDialFunction {
         login_dial.setVisible(true);
     }
 
-     //Method used to show an info or error panel to the user after requiring a service
+    /**
+     * Show option pane.
+     *
+     * @param comp    the comp
+     * @param title   the title
+     * @param msg     the msg
+     * @param msgType the msg type
+     */
+//Method used to show an info or error panel to the user after requiring a service
     protected void showOptionPane(Component comp,String title, String msg, int msgType){
         JOptionPane.showMessageDialog(comp,
                     msg,

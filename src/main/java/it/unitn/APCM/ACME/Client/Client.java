@@ -4,8 +4,16 @@ import it.unitn.APCM.ACME.Client.Dials.EditorDial;
 
 import javax.swing.*;
 
+/**
+ * The type Client.
+ */
 public class Client {
 
+    /**
+     * Main.
+     *
+     * @param args the args
+     */
     public static void main(String args[]) {
         /*
          * NORMAL DIALOG

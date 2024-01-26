@@ -9,6 +9,9 @@ import javax.swing.border.*;
 import it.unitn.APCM.ACME.Client.GuardConnection;
 import it.unitn.APCM.ACME.Client.User;
 
+/**
+ * The type Login dial.
+ */
 //Dial used for the login
 public class LoginDial extends JDialog {
 
@@ -20,6 +23,12 @@ public class LoginDial extends JDialog {
     private CommonDialFunction commonFunction = new CommonDialFunction();
 
 
+    /**
+     * Instantiates a new Login dial.
+     *
+     * @param parent the parent
+     * @param user   the user
+     */
     public LoginDial(Frame parent, User user) {
         super(parent, "Login", true);
 
@@ -94,10 +103,20 @@ public class LoginDial extends JDialog {
         setLocationRelativeTo(parent);
     }
 
+    /**
+     * Gets email.
+     *
+     * @return the email
+     */
     public String get_email() {
         return tf_email.getText().trim();
     }
 
+    /**
+     * Gets password.
+     *
+     * @return the password
+     */
     public String get_password() {
         return new String(pf_password.getPassword());
     }
