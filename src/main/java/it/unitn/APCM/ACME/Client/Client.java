@@ -21,7 +21,9 @@ public class Client {
         editor_dial.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         editor_dial.setSize(1500, 700);
         editor_dial.setLocationRelativeTo(null);
-        editor_dial.setVisible(true);
+        if (editor_dial.isEnabled()) {
+            editor_dial.setVisible(true);
+        }
 
         System.exit(0);
     }

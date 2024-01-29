@@ -72,8 +72,6 @@ public class EditorDial extends JDialog {
         // Right panel with list of files as buttons
         JPanel buttons_panel = new JPanel(new GridBagLayout());
         GridBagConstraints button_constraints = new GridBagConstraints();
-        createButtons(buttons, user, text_area);
-        updateButtons(buttons, buttons_panel, button_constraints);
 
         JScrollPane files_ScrollPane = new JScrollPane(buttons_panel);
         cs.gridx = 1;
@@ -216,8 +214,10 @@ public class EditorDial extends JDialog {
         panel.add(input_panel, cs);
 
         panel.setBorder(new LineBorder(Color.GRAY));
-
         getContentPane().add(panel, BorderLayout.CENTER);
+
+        createButtons(buttons, user, text_area);
+        updateButtons(buttons, buttons_panel, button_constraints);
 
         pack();
         setSize(1000, 600);
@@ -262,15 +262,13 @@ public class EditorDial extends JDialog {
                 ArrayList<String> response = new ArrayList<>();
 
                 // Check it's an ArrayList and convert the object
-                if (resp.getResponse() instanceof ArrayList<?>) {
-                    ArrayList<?> res = (ArrayList<?>) resp.getResponse();
-                    if (res.size() > 0) {
-                        for (int i = 0; i < res.size(); i++) {
-                            Object o = res.get(i);
-                            if (o instanceof String) {
-                                response.add((String) o);
-                            }
-                        }
+                if (resp.getResponse() instanceof ArrayList<?> res) {
+					if (!res.isEmpty()) {
+						for (Object o : res) {
+							if (o instanceof String) {
+								response.add((String) o);
+							}
+						}
                     }
                 }
 
@@ -290,9 +288,15 @@ public class EditorDial extends JDialog {
                 commonFunction.newLogin(user);
             } else if (resp.getStatus() == 1) {
                 // Open failed, show error message
-                cleanText();
-                commonFunction.showOptionPane(EditorDial.this, "Opening", "Error in opening file",
-                        JOptionPane.ERROR_MESSAGE);
+                if (user.isAuthenticated()) {
+                    cleanText();
+                    commonFunction.showOptionPane(EditorDial.this, "Opening", "Error in opening file",
+                            JOptionPane.ERROR_MESSAGE);
+                } else {
+                    // User not auth yet
+                    // Probably the login form is closed
+                    this.setEnabled(false);
+                }
             }
         }
     }
@@ -328,7 +332,12 @@ public class EditorDial extends JDialog {
         text_area.setText("");
         selected_file.setText("No file selected");
         path = "";
-        btn_save.setEnabled(false);
-        btn_delete.setEnabled(false);
+        if (btn_save != null && btn_delete != null) {
+            btn_save.setEnabled(false);
+            btn_delete.setEnabled(false);
+        }
+        else {
+            // btn not already created
+        }
     }
 }
