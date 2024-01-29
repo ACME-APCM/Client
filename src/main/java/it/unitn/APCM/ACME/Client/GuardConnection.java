@@ -6,11 +6,9 @@ import java.util.ArrayList;
 import java.net.HttpURLConnection;
 import javax.net.ssl.HttpsURLConnection;
 
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
 
 import it.unitn.APCM.ACME.Client.ClientCommon.ClientResponse;
 import it.unitn.APCM.ACME.Client.ClientCommon.JSONToArray;
@@ -43,13 +41,10 @@ public class GuardConnection {
             con.setDoOutput(true);
 
             // Create a JSON object for credentials
-            JSONObject credentials = new JSONObject();
-            try {
-                credentials.put("email", email);
-                credentials.put("password", password);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            JsonObject credentials = new JsonObject();
+            credentials.addProperty("email", email);
+            credentials.addProperty("password", password);
+            
 
             // Convert the JSON object to a string
             String jsonInputString = credentials.toString();
