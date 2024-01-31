@@ -127,6 +127,9 @@ public class GuardConnection {
             } else if (con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 // if jwt token is invalid or expired, set the related status
                 response.setStatus(2);
+            } else if (con.getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN) {
+                // unauthorized user
+                response.setStatus(3);
             }
         } catch (IOException e) {
             // return empty response which is by default error
@@ -169,6 +172,9 @@ public class GuardConnection {
             } else if (con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 // if jwt token is invalid or expired, set the related status
                 res.setStatus(2);
+            } else if (con.getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN) {
+                // unauthorized user
+                res.setStatus(3);
             }
         } catch (IOException e) {
             // return empty response which is by default error
@@ -210,6 +216,9 @@ public class GuardConnection {
             } else if (con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 // if jwt token is invalid or expired, set the related status
                 res.setStatus(2);
+            } else if (con.getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN) {
+                // unauthorized user
+                res.setStatus(3);
             }
         } catch (IOException e) {
             // return empty response which is by default error
@@ -267,6 +276,9 @@ public class GuardConnection {
             } else if (con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 // if jwt token is invalid or expired, set the related status
                 res.setStatus(2);
+            } else if (con.getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN) {
+                // unauthorized user
+                res.setStatus(3);
             }
         } catch (IOException e) {
             // return empty response which is by default error
@@ -308,6 +320,9 @@ public class GuardConnection {
             } else if (con.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
                 // if jwt token is invalid or expired, set the related status
                 res.setStatus(2);
+            } else if (con.getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN) {
+                // unauthorized user
+                res.setStatus(3);
             }
         } catch (IOException e) {
             // return empty response which is by default error

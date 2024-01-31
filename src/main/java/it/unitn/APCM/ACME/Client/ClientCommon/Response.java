@@ -5,7 +5,7 @@ package it.unitn.APCM.ACME.Client.ClientCommon;
  */
 public class Response {
     /**
-     * The Status related to the response => 0: OK, 1: INTERNAL_ERROR, 2: UNAUTHORIZED.
+     * The Status related to the response => 0: OK, 1: INTERNAL_ERROR, 2: UNAUTHORIZED., 3: FORBIDDEN
      */
     int status; 
     /**

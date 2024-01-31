@@ -103,6 +103,10 @@ public class EditorDial extends JDialog {
                         // if jwt token is not valid or expired, require the login
                         cleanText();
                         commonFunction.newLogin(user);
+                    } else if (res == 3) {
+                        // if user is not authorized
+                        commonFunction.showOptionPane(EditorDial.this, "Save info", "Unauthorized user",
+                                JOptionPane.ERROR_MESSAGE);
                     } else {
                         // if not, an error is occured, so set url to null and then an error message is
                         // displayed
@@ -151,7 +155,11 @@ public class EditorDial extends JDialog {
                         // if jwt token is not valid or expired, require the login
                         cleanText();
                         commonFunction.newLogin(user);
-                    } else {
+                    }else if (res == 3) {
+                        // if user is not authorized
+                        commonFunction.showOptionPane(EditorDial.this, "Delete info", "Unauthorized user",
+                                JOptionPane.ERROR_MESSAGE);
+                    }else {
                         // if not, an error is occured, so set url to null and then an error message is
                         // displayed
                         url = null;
@@ -286,6 +294,10 @@ public class EditorDial extends JDialog {
                 // if jwt token is expired or is not valid, require a new login
                 cleanText();
                 commonFunction.newLogin(user);
+            } else if (resp.getStatus() == 3) {
+                // if user is not authorized
+                commonFunction.showOptionPane(EditorDial.this, "Opening", "Unauthorized user",
+                        JOptionPane.ERROR_MESSAGE);
             } else if (resp.getStatus() == 1) {
                 // Open failed, show error message
                 if (user.isAuthenticated()) {
@@ -319,6 +331,10 @@ public class EditorDial extends JDialog {
             // if jwt token is invalid or expired, require a new login
             cleanText();
             commonFunction.newLogin(user);
+        } else if (status == 3) {
+            // if user is not authorized
+            commonFunction.showOptionPane(EditorDial.this, "Open info", "Unauthorized user",
+                    JOptionPane.ERROR_MESSAGE);
         } else {
             // if failed, show an error message
             cleanText();
