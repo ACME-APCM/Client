@@ -104,6 +104,7 @@ public class EditorDial extends JDialog {
                         cleanText();
                         commonFunction.newLogin(user);
                     } else if (res == 3) {
+                        cleanText();
                         // if user is not authorized
                         commonFunction.showOptionPane(EditorDial.this, "Save info", "Unauthorized user",
                                 JOptionPane.ERROR_MESSAGE);
@@ -156,6 +157,7 @@ public class EditorDial extends JDialog {
                         cleanText();
                         commonFunction.newLogin(user);
                     }else if (res == 3) {
+                        cleanText();
                         // if user is not authorized
                         commonFunction.showOptionPane(EditorDial.this, "Delete info", "Unauthorized user",
                                 JOptionPane.ERROR_MESSAGE);
@@ -295,6 +297,7 @@ public class EditorDial extends JDialog {
                 cleanText();
                 commonFunction.newLogin(user);
             } else if (resp.getStatus() == 3) {
+                cleanText();
                 // if user is not authorized
                 commonFunction.showOptionPane(EditorDial.this, "Opening", "Unauthorized user",
                         JOptionPane.ERROR_MESSAGE);
@@ -332,6 +335,7 @@ public class EditorDial extends JDialog {
             cleanText();
             commonFunction.newLogin(user);
         } else if (status == 3) {
+            cleanText();
             // if user is not authorized
             commonFunction.showOptionPane(EditorDial.this, "Open info", "Unauthorized user",
                     JOptionPane.ERROR_MESSAGE);
