@@ -130,7 +130,11 @@ public class GuardConnection {
             } else if (con.getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN) {
                 // unauthorized user
                 response.setStatus(3);
+            }  else if (con.getResponseCode() == HttpURLConnection.HTTP_PRECON_FAILED) {
+                // File corrupted
+                response.setStatus(4);
             }
+
         } catch (IOException e) {
             // return empty response which is by default error
             return new Response();
@@ -175,6 +179,9 @@ public class GuardConnection {
             } else if (con.getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN) {
                 // unauthorized user
                 res.setStatus(3);
+            } else if (con.getResponseCode() == HttpURLConnection.HTTP_PRECON_FAILED) {
+                // File corrupted
+                res.setStatus(4);
             }
         } catch (IOException e) {
             // return empty response which is by default error
@@ -219,6 +226,9 @@ public class GuardConnection {
             } else if (con.getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN) {
                 // unauthorized user
                 res.setStatus(3);
+            } else if (con.getResponseCode() == HttpURLConnection.HTTP_PRECON_FAILED) {
+                // File corrupted
+                res.setStatus(4);
             }
         } catch (IOException e) {
             // return empty response which is by default error
@@ -279,6 +289,9 @@ public class GuardConnection {
             } else if (con.getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN) {
                 // unauthorized user
                 res.setStatus(3);
+            } else if (con.getResponseCode() == HttpURLConnection.HTTP_PRECON_FAILED) {
+                // File corrupted
+                res.setStatus(4);
             }
         } catch (IOException e) {
             // return empty response which is by default error
@@ -323,6 +336,9 @@ public class GuardConnection {
             } else if (con.getResponseCode() == HttpURLConnection.HTTP_FORBIDDEN) {
                 // unauthorized user
                 res.setStatus(3);
+            } else if (con.getResponseCode() == HttpURLConnection.HTTP_PRECON_FAILED) {
+                // File corrupted
+                res.setStatus(4);
             }
         } catch (IOException e) {
             // return empty response which is by default error

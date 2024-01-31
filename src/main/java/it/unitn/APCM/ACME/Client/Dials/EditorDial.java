@@ -84,6 +84,7 @@ public class EditorDial extends JDialog {
         // Bottom panel with Save, new File adn delete buttons
         JPanel input_panel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         btn_save = new JButton("Save");
+        text_area.setEditable(false);
         btn_save.setEnabled(false);
         btn_save.addActionListener(new ActionListener() {
             // Method to save the file
@@ -107,6 +108,11 @@ public class EditorDial extends JDialog {
                         cleanText();
                         // if user is not authorized
                         commonFunction.showOptionPane(EditorDial.this, "Save info", "Unauthorized user",
+                                JOptionPane.ERROR_MESSAGE);
+                    }  else if (res == 4) {
+                        cleanText();
+                        // if user is not authorized
+                        commonFunction.showOptionPane(EditorDial.this, "Save info", "File corrupted",
                                 JOptionPane.ERROR_MESSAGE);
                     } else {
                         // if not, an error is occured, so set url to null and then an error message is
@@ -161,7 +167,12 @@ public class EditorDial extends JDialog {
                         // if user is not authorized
                         commonFunction.showOptionPane(EditorDial.this, "Delete info", "Unauthorized user",
                                 JOptionPane.ERROR_MESSAGE);
-                    }else {
+                    } else if (res == 4) {
+                        cleanText();
+                        // if user is not authorized
+                        commonFunction.showOptionPane(EditorDial.this, "Delete info", "File corrupted",
+                                JOptionPane.ERROR_MESSAGE);
+                    } else {
                         // if not, an error is occured, so set url to null and then an error message is
                         // displayed
                         url = null;
@@ -202,6 +213,7 @@ public class EditorDial extends JDialog {
                     path = new_file_dial.getFilePath();
                     selected_file.setText(path);
                     text_area.setText("");
+                    text_area.setEditable(true);
                     btn_save.setEnabled(true);
                     btn_delete.setEnabled(true);
                     buttons.add(button);
@@ -301,6 +313,11 @@ public class EditorDial extends JDialog {
                 // if user is not authorized
                 commonFunction.showOptionPane(EditorDial.this, "Opening", "Unauthorized user",
                         JOptionPane.ERROR_MESSAGE);
+            } else if (resp.getStatus() == 4) {
+                cleanText();
+                // if user is not authorized
+                commonFunction.showOptionPane(EditorDial.this, "Opening", "File corrupted",
+                        JOptionPane.ERROR_MESSAGE);
             } else if (resp.getStatus() == 1) {
                 // Open failed, show error message
                 if (user.isAuthenticated()) {
@@ -328,6 +345,7 @@ public class EditorDial extends JDialog {
             // if response is successfull, set the text
             text_area.setText(response.get_text()); // Set path of the file to make it clear
             selected_file.setText(requested_path);
+            text_area.setEditable(response.get_w_mode());
             btn_save.setEnabled(response.get_w_mode()); // enable save button depending on the permission of the user
             btn_delete.setEnabled(response.get_w_mode()); // enable delete button depending on the permission of the user
         } else if (status == 2) {
@@ -339,7 +357,12 @@ public class EditorDial extends JDialog {
             // if user is not authorized
             commonFunction.showOptionPane(EditorDial.this, "Open info", "Unauthorized user",
                     JOptionPane.ERROR_MESSAGE);
-        } else {
+        } else if (status == 4) {
+            cleanText();
+            // if user is not authorized
+            commonFunction.showOptionPane(EditorDial.this, "Open info", "File corrupted",
+                    JOptionPane.ERROR_MESSAGE);
+        }  else {
             // if failed, show an error message
             cleanText();
             commonFunction.showOptionPane(EditorDial.this, "Open info", "Error in opening file",
@@ -350,6 +373,7 @@ public class EditorDial extends JDialog {
     // Method to clean text area
     private void cleanText() {
         text_area.setText("");
+        text_area.setEditable(false);
         selected_file.setText("No file selected");
         path = "";
         if (btn_save != null && btn_delete != null) {
