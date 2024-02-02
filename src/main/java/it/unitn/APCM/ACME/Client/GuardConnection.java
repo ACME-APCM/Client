@@ -272,7 +272,7 @@ public class GuardConnection {
             }
 
             // Analyze the reponse code
-            if (con.getResponseCode() == HttpURLConnection.HTTP_CREATED) {
+            if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
                 String inputLine;
 
