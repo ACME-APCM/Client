@@ -18,9 +18,9 @@ public class JSONToArray extends ArrayList<String> {
 	/**
 	 * Convert to client response the response.
 	 *
-	 * @param str the str recieved as response
-	 * @return the client response
-	 * @throws JsonProcessingException the json processing exception
+	 * @param str the string received as response
+	 * @return the ClientResponse object
+	 * @throws JsonProcessingException the JSON processing exception
 	 */
 	public ClientResponse convertToClientResponse(String str) throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();

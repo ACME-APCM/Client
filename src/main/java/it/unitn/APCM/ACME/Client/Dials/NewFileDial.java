@@ -27,7 +27,7 @@ public class NewFileDial extends JDialog {
     private CommonDialFunction commonFunction = new CommonDialFunction();
 
     /**
-     * Instantiates a new New file dial used to create a new file: it requires path
+     * Instantiates a NewFile dial used to create a new file: it requires path
      * and read/write permission.
      *
      * @param parent the parent

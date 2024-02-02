@@ -12,7 +12,7 @@ import it.unitn.APCM.ACME.Client.ClientCommon.User;
  */
 public class CommonDialFunction {
     /**
-     * New login used in different dials to call a new login form to login or if
+     * New login used in different dials to call a new login form to log-in or if
      * token is expired.
      *
      * @param user the user

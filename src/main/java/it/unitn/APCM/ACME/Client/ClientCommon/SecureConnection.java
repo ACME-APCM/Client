@@ -23,9 +23,9 @@ public class SecureConnection {
 	private HttpsURLConnection secure_con;
 
 	/**
-	 * Instantiates a new Secure connection.
+	 * Instantiates a new Secure (TLSv1.3) connection using the SSLContext created with Client JKS stores
 	 *
-	 * @param url the url
+	 * @param url the url of the endpoint of the connection
 	 */
 	public SecureConnection(String url) {
 		String request_url = guard_url + url;
@@ -93,9 +93,9 @@ public class SecureConnection {
 	}
 
 	/**
-	 * Gets secure con.
+	 * Gets secure connection for performing REST API calls.
 	 *
-	 * @return the secure con
+	 * @return the secured connection
 	 */
 	public HttpsURLConnection getSecure_con() { return secure_con; }
 }

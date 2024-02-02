@@ -5,12 +5,12 @@ import it.unitn.APCM.ACME.Client.Dials.EditorDial;
 import javax.swing.*;
 
 /**
- * The type Client.
+ * The startup class for the Client.
  */
 public class Client {
 
     /**
-     * Main.
+     * Main of the Client side of the ACME project
      *
      * @param args the args
      */

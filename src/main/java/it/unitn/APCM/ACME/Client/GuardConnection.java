@@ -22,7 +22,7 @@ import it.unitn.APCM.ACME.Client.ClientCommon.User;
 public class GuardConnection {
 
     /**
-     * Http request login boolean used to requst a login to the guard.
+     * The HTTPS request used to request a login to the guard.
      *
      * @param url      the url
      * @param email    the email
@@ -80,7 +80,7 @@ public class GuardConnection {
     }
 
     /**
-     * Http request file used to request the list of all the files.
+     * The HTTPS request used to request the list of all the files.
      *
      * @param url  the url
      * @param user the user
@@ -144,7 +144,7 @@ public class GuardConnection {
     }
 
     /**
-     * Http request open used to open a specific file.
+     * The HTTPS request used to open a specific file.
      *
      * @param url the url
      * @param jwt the jwt
@@ -192,7 +192,7 @@ public class GuardConnection {
     }
 
     /**
-     * Http request create used to create a new file.
+     * The HTTPS request used to create a new file.
      *
      * @param url the url
      * @param jwt the jwt
@@ -239,7 +239,7 @@ public class GuardConnection {
     }
 
     /**
-     * Http request save used to save a file.
+     * The HTTPS request used to save a file.
      *
      * @param url     the url
      * @param content the content
@@ -302,7 +302,7 @@ public class GuardConnection {
     }
 
     /**
-     * Http request create used to delete a file.
+     * The HTTPS request used to delete a file.
      *
      * @param url the url
      * @param jwt the jwt

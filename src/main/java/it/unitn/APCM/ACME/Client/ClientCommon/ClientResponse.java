@@ -17,7 +17,7 @@ public class ClientResponse {
      */
     boolean w_mode; 
     /**
-     * The Text of the file.
+     * The Text of the response.
      */
     String text;
 
@@ -36,16 +36,16 @@ public class ClientResponse {
     public void set_auth(boolean auth) {this.auth = auth;}
 
     /**
-     * Sets text.
+     * Sets text fo the response
      *
      * @param text the text
      */
     public void set_text(String text) {this.text = text;}
 
     /**
-     * Sets w mode.
+     * Sets the write mode.
      *
-     * @param w_mode the w mode
+     * @param w_mode the write mode
      */
     public void set_w_mode(boolean w_mode) {this.w_mode = w_mode;}
 
@@ -57,7 +57,7 @@ public class ClientResponse {
     public String get_path() {return this.path;}
 
     /**
-     * Gets text.
+     * Gets text fo the response.
      *
      * @return the text
      */
@@ -71,9 +71,9 @@ public class ClientResponse {
     public boolean get_auth() {return this.auth;}
 
     /**
-     * Gets w mode.
+     * Gets the write mode.
      *
-     * @return the w mode
+     * @return the write mode
      */
     public boolean get_w_mode() {return this.w_mode;}
 }
